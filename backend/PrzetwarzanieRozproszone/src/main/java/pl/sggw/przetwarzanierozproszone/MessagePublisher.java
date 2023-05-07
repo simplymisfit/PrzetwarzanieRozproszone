@@ -15,13 +15,12 @@ public class MessagePublisher {
     @Autowired
     private RabbitTemplate template;
 
-    @PostMapping("/publish")
-    public String publishMessage(@RequestBody CustomMessage message){
-        message.setMessgaeId(UUID.randomUUID().toString());
+
+    @PostMapping("/chat")
+    public void sendChatMessage(@RequestBody CustomMessage message){
+        message.setMessageId(UUID.randomUUID().toString());
         message.setMessageDate(new Date());
         template.convertAndSend(MQConfig.EXCHANGE, MQConfig.ROUTING_KEY, message);
-
-        return "Message published";
     }
 
 }
