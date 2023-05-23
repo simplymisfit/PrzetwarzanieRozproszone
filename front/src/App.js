@@ -1,7 +1,20 @@
 import "./app.css";
+import { ThemeProvider } from "@mui/material/styles";
+import theme from "./styles/theme";
+import PokemonProvider from "./providers/PokemonProvider";
+import Authorized from "./components/Authorized/Authorized";
+import Unauthorized from "./components/Unauthorized/Unauthorized";
 
 function App() {
-  return <div className="App">Pokemon</div>;
+  return (
+    <ThemeProvider theme={theme}>
+      <PokemonProvider>
+        <div className="App">
+          <Unauthorized />
+        </div>
+      </PokemonProvider>
+    </ThemeProvider>
+  );
 }
 
 export default App;
