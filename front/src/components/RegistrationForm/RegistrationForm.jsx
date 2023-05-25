@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import { FormWrapper, Header, SubmitButton, PokemonImage, TextButton, NoAccountWrapper } from "./RegistrationForm.styled";
+import { FormWrapper, Header, PokemonImage, NoAccountWrapper } from "./RegistrationForm.styled";
 import { useForm } from "react-hook-form";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import MenuItem from "@mui/material/MenuItem";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import TextField from "@mui/material/TextField";
-import FastfoodIcon from "@mui/icons-material/Fastfood";
+import Select from "@mui/material/Select";
 import ErrorNotification from "../ErrorNotification/ErrorNotification";
 import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
@@ -15,6 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import Bulbasaur from "./images/bulbasaur.png";
 import Charmander from "./images/charmander.png";
 import Squirtle from "./images/squirtle.png";
+import Button from "@mui/material/Button";
 
 const RegistrationForm = ({ setIsLogin }) => {
   const {
@@ -133,10 +132,14 @@ const RegistrationForm = ({ setIsLogin }) => {
         </FormControl>
         {errors.type?.type === "required" && starterPokemon === "" && <ErrorNotification message="This field is required" />}
         {renderPokemon(starterPokemon)}
-        <SubmitButton type="submit">Zarejestruj się</SubmitButton>
+        <Button type="submit" variant="contained" size="large" color="primary">
+          Zarejestruj się
+        </Button>
         <NoAccountWrapper>
           <p>Posiadasz już konto?</p>
-          <TextButton onClick={() => setIsLogin(true)}>Zaloguj się</TextButton>
+          <Button variant="text" onClick={() => setIsLogin(true)}>
+            Zaloguj się
+          </Button>
         </NoAccountWrapper>
         {open ? (
           <Alert

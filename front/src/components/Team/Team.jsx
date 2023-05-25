@@ -1,9 +1,68 @@
-import React from 'react'
+import React, { useState } from "react";
+import {
+  TeamDescription,
+  PokemonWrapper,
+  PokemonImage,
+  PokemonStats,
+  PokemonName,
+  ProgressBarWrapper,
+  ProgressBarHP,
+  ProgressBarEXP,
+} from "./Team.styled";
+import { RightItemWrapper, RightItemHeader } from "../Profile/Profile.styled";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import Pokemon from "./images/pokemon.png";
 
 const Team = () => {
-  return (
-    <div>Team</div>
-  )
-}
+  const [isOpen, setOpen] = useState(true);
 
-export default Team
+  let pokemons = [
+    { name: "Pikachu ", lvl: 10, hp: 2431, hpNeeded: 2700, exp: 10, expNeeded: 100 },
+    { name: "Pikachu ", lvl: 11, hp: 2431, hpNeeded: 2700, exp: 1, expNeeded: 100 },
+    { name: "Pikachu ", lvl: 12, hp: 100, hpNeeded: 2700, exp: 10, expNeeded: 100 },
+    { name: "Pikachu ", lvl: 10, hp: 300, hpNeeded: 2700, exp: 56, expNeeded: 100 },
+    { name: "Pikachu ", lvl: 15, hp: 1200, hpNeeded: 2700, exp: 10, expNeeded: 100 },
+    { name: "Pikachu ", lvl: 10, hp: 1900, hpNeeded: 2700, exp: 31, expNeeded: 100 },
+  ];
+  return (
+    <RightItemWrapper>
+      <RightItemHeader isOpen={isOpen} onClick={() => setOpen(!isOpen)}>
+        <span>Drużyna</span>
+        {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+      </RightItemHeader>
+      {isOpen ? (
+        <TeamDescription>
+          {pokemons.map((pokemon, id) => {
+            return (
+              <PokemonWrapper key={id}>
+                <PokemonImage src={Pokemon} />
+                <PokemonStats>
+                  <PokemonName>
+                    {pokemon.name} ({pokemon.lvl} poz.)
+                  </PokemonName>
+                  <ProgressBarWrapper color="#fb1b1b">
+                    <ProgressBarHP hp={pokemon.hp} hpNeeded={pokemon.hpNeeded}>
+                      <span>
+                        {pokemon.hp}/{pokemon.hpNeeded} PŻ
+                      </span>
+                    </ProgressBarHP>
+                  </ProgressBarWrapper>
+                  <ProgressBarWrapper color="#5132c0">
+                    <ProgressBarEXP exp={pokemon.exp} expNeeded={pokemon.expNeeded}>
+                      <span>
+                        {pokemon.exp}/{pokemon.expNeeded} PD
+                      </span>
+                    </ProgressBarEXP>
+                  </ProgressBarWrapper>
+                </PokemonStats>
+              </PokemonWrapper>
+            );
+          })}
+        </TeamDescription>
+      ) : null}
+    </RightItemWrapper>
+  );
+};
+
+export default Team;

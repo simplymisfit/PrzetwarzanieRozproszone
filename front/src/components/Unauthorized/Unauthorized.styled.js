@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import themeColors from "../../styles/colors";
+// import themeColors from "../../styles/colors";
 
 const UnauthorizedWrapper = styled.div`
   width: 100%;

@@ -10,7 +10,8 @@ function App() {
     <ThemeProvider theme={theme}>
       <PokemonProvider>
         <div className="App">
-          <Unauthorized />
+          {/* <Unauthorized /> */}
+          <Authorized />
         </div>
       </PokemonProvider>
     </ThemeProvider>
