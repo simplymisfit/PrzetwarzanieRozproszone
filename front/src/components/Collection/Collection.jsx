@@ -13,11 +13,18 @@ import {
 } from "./Collection.styled";
 import { LeftItemWrapper, LeftItemHeader } from "../Locations/Locations.styled";
 import Squirtle from "./images/7.png";
+import PokemonModal from "../PokemonModal/PokemonModal";
 
 const Collection = () => {
   // const [pokemons, setPokemons] = useState([]);
   const [region, setRegion] = useState("Kanto");
   const [category, setCategory] = useState(0);
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleModal = () => {
+    setIsOpen(!isOpen);
+  };
 
   const categories = [
     { name: "Kanto", value: 1 },
@@ -58,12 +65,13 @@ const Collection = () => {
           </Option>
         </Options>
         <ImagesWrapper>
-          <ImageWrapper>
+          <ImageWrapper onClick={() => toggleModal()}>
             <PokemonImage src={Squirtle} />
             <PokemonInfo>#1 Squirtle</PokemonInfo>
           </ImageWrapper>
         </ImagesWrapper>
       </CollectionDescription>
+      <PokemonModal isOpen={isOpen} toggleModal={toggleModal} />
     </LeftItemWrapper>
   );
 };

@@ -61,6 +61,7 @@ const ImageWrapper = styled.div`
   width: fit-content;
   border-radius: 4px;
   padding: 6px 12px;
+  cursor: pointer;
 `;
 
 const PokemonImage = styled.img`
