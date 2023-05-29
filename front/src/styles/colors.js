@@ -6,5 +6,6 @@ export default {
     gray: "rgba(255, 255, 255, 0.5)",
     stroke: "#90e0ef",
     white: "#fff",
+    green: "#68AE31",
   },
 };

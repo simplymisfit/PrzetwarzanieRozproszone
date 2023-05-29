@@ -11,6 +11,7 @@ import {
 } from "./Locations.styled";
 import Button from "@mui/material/Button";
 import LocationImg from "./images/location.png";
+import { Link } from "react-router-dom";
 
 const Locations = () => {
   let locations = [
@@ -35,9 +36,11 @@ const Locations = () => {
                 <LocationImage src={LocationImg} />
                 <LocationDescription>
                   <p>{location.description}</p>
-                  <Button variant="contained" size="large" color="primary">
-                    Podróżuj
-                  </Button>
+                  <Link to="/expedition">
+                    <Button variant="contained" size="large" color="primary">
+                      Podróżuj
+                    </Button>
+                  </Link>
                 </LocationDescription>
               </LocationDetails>
             </Location>

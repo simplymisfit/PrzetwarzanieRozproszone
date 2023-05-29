@@ -4,6 +4,7 @@ import { AuthorizedWrapper, LeftWrapper, RightWrapper } from "./Authorized.style
 import Profile from "../Profile/Profile";
 import Team from "../Team/Team";
 import Location from "../Locations/Locations";
+import Expedition from "../Expedition/Expedition";
 import Chat from "../Chat/Chat";
 import Collection from "../Collection/Collection";
 import { Routes, Route } from "react-router-dom";
@@ -16,6 +17,7 @@ const Authorized = () => {
         <LeftWrapper>
           <Routes>
             <Route path="/locations" exact element={<Location />} />
+            <Route path="/expedition" exact element={<Expedition />} />
             <Route path="/collection" exact element={<Collection />} />
 
             {/* <Route path="/"></Route> */}
