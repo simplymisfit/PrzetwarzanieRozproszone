@@ -13,7 +13,7 @@ import java.util.Date;
 @ToString
 public class CustomMessage {
 
-    private String messgaeId;
+    private String messageId;
     private String message;
     private Date messageDate;
 

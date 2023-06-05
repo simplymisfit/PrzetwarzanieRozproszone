@@ -17,11 +17,17 @@ public class ApplicationController {
     @Autowired
     private RabbitTemplate template;
 
-    @PostMapping("/publish")
+    @PostMapping("/chat")
     public String publishMessage(@RequestBody CustomMessage message){
-        message.setMessgaeId(UUID.randomUUID().toString());
+        message.setMessageId(UUID.randomUUID().toString());
         message.setMessageDate(new Date());
         template.convertAndSend(MQConfig.EXCHANGE, MQConfig.ROUTING_KEY, message);
+
+        var msg = message.getMessage();
+
+        if (msg.startsWith("!")) {
+            template.convertAndSend(MQConfig.EXCHANGE2, MQConfig.ROUTING_KEY2, message);
+        }
 
         return "Message published";
     }
