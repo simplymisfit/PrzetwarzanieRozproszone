@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
 import pl.sggw.przetwarzanierozproszone.domain.CustomMessage;
+import pl.sggw.przetwarzanierozproszone.enums.ChannelEnum;
 
 import java.util.Date;
 import java.util.UUID;
@@ -18,17 +19,28 @@ public class ApplicationController {
     private RabbitTemplate template;
 
     @PostMapping("/chat")
-    public String publishMessage(@RequestBody CustomMessage message){
+    public void publishMessage(@RequestBody CustomMessage message){
         message.setMessageId(UUID.randomUUID().toString());
         message.setMessageDate(new Date());
-        template.convertAndSend(MQConfig.EXCHANGE, MQConfig.ROUTING_KEY, message);
 
         var msg = message.getMessage();
-
         if (msg.startsWith("!")) {
+            message.setMessage(msg.substring(1));
+            template.convertAndSend(MQConfig.EXCHANGE, MQConfig.ROUTING_KEY, message);
             template.convertAndSend(MQConfig.EXCHANGE2, MQConfig.ROUTING_KEY2, message);
         }
+        else {
+            String exchange;
+            String routingKey;
+            if (message.getChannel() == ChannelEnum.firstChannel) {
+                exchange = MQConfig.EXCHANGE;
+                routingKey = MQConfig.ROUTING_KEY;
+            } else {
+                exchange = MQConfig.EXCHANGE2;
+                routingKey = MQConfig.ROUTING_KEY2;
+            }
 
-        return "Message published";
+            template.convertAndSend(exchange, routingKey, message);
+        }
     }
 }
