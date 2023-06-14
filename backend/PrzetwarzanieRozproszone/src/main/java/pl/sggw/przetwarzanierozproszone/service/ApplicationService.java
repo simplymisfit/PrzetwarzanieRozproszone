@@ -65,12 +65,17 @@ public class ApplicationService {
 
             if(defenderPokemons.get(0)<=0){
                 defenderPokemons.remove(0);
+                fight.add("Pokemon: "+defenderPokemonNames.get(0)+ " gracza: "+defender.getUsername()+" został wyeliminowany");
                 defenderPokemonNames.remove(0);
+                if(defenderPokemons.size()!=0)
+                    fight.add("Pokemon: "+defenderPokemonNames.get(0)+ " gracza: "+defender.getUsername()+" wchodzi do walki");
+
             }
             if(defenderPokemons.size()==0){
                 fight.add("Wygrał gracz: "+attacker.getUsername());
                 break;
             }
+
 
             damage = generator.nextInt(21)+20;//od 20 do 40
             attackerPokemons.set(0,attackerPokemons.get(0)-damage);
@@ -82,7 +87,10 @@ public class ApplicationService {
 
             if(attackerPokemons.get(0)<=0){
                 attackerPokemons.remove(0);
+                fight.add("Pokemon: "+attackerPokemonNames.get(0)+ " gracza: "+attacker.getUsername()+" został wyeliminowany");
                 attackerPokemonNames.remove(0);
+                if(defenderPokemons.size()!=0)
+                    fight.add("Pokemon: "+attackerPokemonNames.get(0)+ " gracza: "+attacker.getUsername()+" wchodzi do walki");
             }
             if(attackerPokemons.size()==0){
                 fight.add("Wygrał gracz: "+defender.getUsername());
