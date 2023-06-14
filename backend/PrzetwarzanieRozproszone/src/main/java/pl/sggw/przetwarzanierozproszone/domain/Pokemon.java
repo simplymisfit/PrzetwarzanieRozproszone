@@ -21,4 +21,5 @@ public class Pokemon {
     @ManyToOne
     @JoinColumn(name = "playern_id")
     private Player player;
+    private String name;
 }

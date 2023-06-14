@@ -1,21 +1,22 @@
 package pl.sggw.przetwarzanierozproszone.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
 import pl.sggw.przetwarzanierozproszone.domain.CustomMessage;
 import pl.sggw.przetwarzanierozproszone.enums.ChannelEnum;
+import pl.sggw.przetwarzanierozproszone.service.ApplicationService;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
+@AllArgsConstructor
 public class ApplicationController {
-
-    @Autowired
+    private ApplicationService applicationService;
     private RabbitTemplate template;
 
     @PostMapping("/chat")
@@ -42,5 +43,11 @@ public class ApplicationController {
 
             template.convertAndSend(exchange, routingKey, message);
         }
+    }
+
+    @PostMapping("/attack/{id}")
+    public List<String> attackPlayer(@PathVariable int id){
+        //dodać principala -------------------------------------------------------------------------
+        return applicationService.attackPlayer(235325,id);
     }
 }
