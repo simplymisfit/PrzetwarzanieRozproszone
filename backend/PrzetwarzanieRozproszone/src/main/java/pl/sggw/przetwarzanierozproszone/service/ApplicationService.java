@@ -34,6 +34,9 @@ public class ApplicationService {
         Player attacker = playerRepository.findById(attackerId).get();
         Player defender = playerRepository.findById(defenderId).get();
 
+        Player winner;
+        Player loser;
+
         List<String> attackerPokemonNames = attacker
                 .getPokemons()
                 .stream()
@@ -71,6 +74,8 @@ public class ApplicationService {
             }
             if(defenderPokemons.size()==0){
                 fight.add("Wygrał gracz: "+attacker.getUsername());
+                winner = attacker;
+                loser = defender;
                 break;
             }
 
@@ -92,10 +97,14 @@ public class ApplicationService {
             }
             if(attackerPokemons.size()==0){
                 fight.add("Wygrał gracz: "+defender.getUsername());
+                winner = defender;
+                loser = attacker;
                 break;
             }
         }
 
+        playerRepository.updateWinCount(winner.getId(), winner.getWinCount()+1);
+        playerRepository.updateLoseCount(loser.getId(), loser.getLoseCount()+1);
 
         return fight;
     }
