@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
 import pl.sggw.przetwarzanierozproszone.domain.CustomMessage;
+import pl.sggw.przetwarzanierozproszone.domain.Player;
 import pl.sggw.przetwarzanierozproszone.enums.ChannelEnum;
 import pl.sggw.przetwarzanierozproszone.service.ApplicationService;
 
@@ -18,7 +19,10 @@ import java.util.UUID;
 public class ApplicationController {
     private ApplicationService applicationService;
     private RabbitTemplate template;
-
+    @PostMapping("/register")
+    public Player processRegister(@RequestBody Player player) {
+        return applicationService.createPlayer(player);
+    }
     @PostMapping("/chat")
     public void publishMessage(@RequestBody CustomMessage message){
         message.setMessageId(UUID.randomUUID().toString());

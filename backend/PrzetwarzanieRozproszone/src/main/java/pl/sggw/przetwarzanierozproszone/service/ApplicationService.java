@@ -1,16 +1,33 @@
 package pl.sggw.przetwarzanierozproszone.service;
 
+import lombok.AllArgsConstructor;
 import org.hibernate.type.TrueFalseType;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
+import pl.sggw.przetwarzanierozproszone.domain.CustomMessage;
+import pl.sggw.przetwarzanierozproszone.domain.MyUserDetails;
 import pl.sggw.przetwarzanierozproszone.domain.Player;
 import pl.sggw.przetwarzanierozproszone.domain.Pokemon;
 import pl.sggw.przetwarzanierozproszone.repository.PlayerRepository;
+import pl.sggw.przetwarzanierozproszone.repository.PokemonRepository;
 
+import javax.persistence.EntityExistsException;
+import java.net.ConnectException;
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class ApplicationService {
     private PlayerRepository playerRepository;
+    private Environment environment;
+    private RabbitTemplate template;
+    private PokemonRepository pokemonRepository;
+    Set<String> playersInChannel;
 
     public List<String> attackPlayer(int attackerId, int defenderId){
         Random generator = new Random();
@@ -100,5 +117,80 @@ public class ApplicationService {
 
 
         return fight;
+    }
+    public Player createPlayer(Player player){
+        if(player.getUsername().contains(" ")){throw new IllegalStateException("Niedozwolony znak");}
+        if(player.getPassword().contains(" ")){throw new IllegalStateException("Niedozwolony znak");}
+        if(player.getUsername().equals("")){throw new IllegalStateException("Niedozwolony znak");}
+        if(player.getPassword().equals("")){throw new IllegalStateException("Niedozwolony znak");}
+        if(!playerRepository.findByUsername(player.getUsername()).equals(Optional.empty())){throw new EntityExistsException("Login zajęty");}
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        player.setPassword(passwordEncoder.encode(player.getPassword()));
+        return playerRepository.save(player);
+    }
+
+    public List<Player> getAllPlayers(){
+        return playerRepository.findAll();
+    }
+    public Player getUserByUsername(String username){
+        return playerRepository.findByUsername(username).get();
+    }
+    public Player getUserById(int id){
+        return playerRepository.findById(id).get();
+    }
+
+    public String getPrincipalUsername(Object principal){
+        if (principal instanceof MyUserDetails) {return  ((MyUserDetails)principal).getUsername();}
+        else{
+            return null;
+        }
+    }
+
+    public void addToChannelPlayerList(String username){
+        checkIfPlayerIsNotOnAnotherChannel(username);
+        String player = playerRepository.findByUsername(username).get().getUsername();
+        playersInChannel.add(player);
+    }
+
+    public void checkIfPlayerIsNotOnAnotherChannel(String username){ //odpytuje drugi serwer czy użytkownik jest zalogowany
+        String port = environment.getProperty("server.number").equals(Integer.toString(1)) ? "8081":"8080";
+        //port = "8080"; //do wywalenia po postawieniu drugiego serwera
+        String uri = "http://localhost:"+port+"/api/game/isonline/"+username;
+        RestTemplate restTemplate = new RestTemplate();
+        try{
+            Boolean response = restTemplate.getForObject(uri, Boolean.class);
+        }
+        catch (Exception e){
+            System.err.println("Drugi serwer nie odpowiada");
+        }
+        sendNotificationOnPlayerLogin(username);
+    }
+
+    public void sendNotificationOnPlayerLogin(String username){
+        CustomMessage message = new CustomMessage();
+        message.setMessageId(UUID.randomUUID().toString());
+        message.setMessageDate(new Date());
+        message.setMessage("["+message.getMessageDate().getHours() + ":" + message.getMessageDate().getMinutes() + "] Zalogowano na kanał "+environment.getProperty("server.number")+": "+username);
+        template.convertAndSend(MQConfig.EXCHANGE2, MQConfig.ROUTING_KEY2, message);
+        //template.convertAndSend(MQConfig.EXCHANGE1, MQConfig.ROUTING_KEY1, message);
+    }
+    public void sendNotificationOnPlayerLogout(String username){
+        CustomMessage message = new CustomMessage();
+        message.setMessageId(UUID.randomUUID().toString());
+        message.setMessageDate(new Date());
+        message.setMessage("["+message.getMessageDate().getHours() + ":" + message.getMessageDate().getMinutes() + "] Wylogowano z kanału "+environment.getProperty("server.number")+": "+username);
+        //template.convertAndSend(MQConfig.EXCHANGE1, MQConfig.ROUTING_KEY1, message);
+    }
+
+    public boolean logout(String username){
+        boolean bool = playersInChannel.remove(username);
+        if(bool){
+            sendNotificationOnPlayerLogout(username);
+        }
+        return bool;
+    }
+
+    public Set<String> getActivePlayers(){
+        return playersInChannel;
     }
 }
