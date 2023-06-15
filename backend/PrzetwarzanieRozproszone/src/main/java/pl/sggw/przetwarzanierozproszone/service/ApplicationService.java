@@ -18,6 +18,7 @@ import pl.sggw.przetwarzanierozproszone.repository.PokemonRepository;
 
 import javax.persistence.EntityExistsException;
 import java.net.ConnectException;
+import java.security.Principal;
 import java.util.*;
 
 @Service
@@ -192,5 +193,15 @@ public class ApplicationService {
 
     public Set<String> getActivePlayers(){
         return playersInChannel;
+    }
+
+    public void choosePokemons(String username, List<Integer> pokemonsId){
+        Player player = playerRepository.findByUsername(username).get();
+        player.setPokemons(getPokemonsById(pokemonsId));
+    }
+    public List<Pokemon> getPokemonsById(List<Integer> pokemonsId){
+        List<Pokemon> pokemons = new ArrayList<>();
+        pokemonsId.stream().forEach(p -> pokemons.add(pokemonRepository.findById(p).get()));
+        return pokemons;
     }
 }

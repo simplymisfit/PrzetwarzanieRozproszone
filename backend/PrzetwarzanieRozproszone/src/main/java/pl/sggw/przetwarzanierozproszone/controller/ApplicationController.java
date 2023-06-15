@@ -3,6 +3,7 @@ package pl.sggw.przetwarzanierozproszone.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
 import pl.sggw.przetwarzanierozproszone.domain.CustomMessage;
@@ -50,8 +51,15 @@ public class ApplicationController {
     }
 
     @PostMapping("/attack/{id}")
-    public List<String> attackPlayer(@PathVariable int id){
-        //dodać principala -------------------------------------------------------------------------
-        return applicationService.attackPlayer(235325,id);
+    public List<String> attackPlayer(@PathVariable int defenderId){
+        String username = applicationService.getPrincipalUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        int attackerId = applicationService.getUserByUsername(username).getId();
+        return applicationService.attackPlayer(attackerId,defenderId);
+    }
+
+    @PostMapping("/setPokemons")
+    public void setPokemons(@RequestBody List<Integer> pokemonsId){
+        String username = applicationService.getPrincipalUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        applicationService.choosePokemons(username,pokemonsId);
     }
 }

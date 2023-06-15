@@ -23,5 +23,5 @@ public class Player {
     private String username;
     private String password;
     @OneToMany(mappedBy = "player")
-    private List<Pokemon> pokeballs;
+    private List<Pokemon> pokemons;
 }
