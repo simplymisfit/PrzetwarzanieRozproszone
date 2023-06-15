@@ -1,6 +1,7 @@
 package pl.sggw.przetwarzanierozproszone.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
 import pl.sggw.przetwarzanierozproszone.domain.CustomMessage;
 import pl.sggw.przetwarzanierozproszone.domain.Player;
+import pl.sggw.przetwarzanierozproszone.domain.PlayerIdUsername;
 import pl.sggw.przetwarzanierozproszone.enums.ChannelEnum;
 import pl.sggw.przetwarzanierozproszone.service.ApplicationService;
 
@@ -63,4 +65,11 @@ public class ApplicationController {
         String username = applicationService.getPrincipalUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         applicationService.choosePokemons(username,pokemonsId);
     }
+
+    @GetMapping("/activePlayers")
+    public List<PlayerIdUsername> getActivePlayers(){
+        return applicationService.getActivePlayers();
+    }
+
+
 }

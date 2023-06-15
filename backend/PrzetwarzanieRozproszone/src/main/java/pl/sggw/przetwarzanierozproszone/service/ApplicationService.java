@@ -9,10 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
-import pl.sggw.przetwarzanierozproszone.domain.CustomMessage;
-import pl.sggw.przetwarzanierozproszone.domain.MyUserDetails;
-import pl.sggw.przetwarzanierozproszone.domain.Player;
-import pl.sggw.przetwarzanierozproszone.domain.Pokemon;
+import pl.sggw.przetwarzanierozproszone.domain.*;
 import pl.sggw.przetwarzanierozproszone.repository.PlayerRepository;
 import pl.sggw.przetwarzanierozproszone.repository.PokemonRepository;
 
@@ -179,8 +176,11 @@ public class ApplicationService {
         return bool;
     }
 
-    public Set<String> getActivePlayers(){
-        return playersInChannel;
+    public List<PlayerIdUsername> getActivePlayers(){
+        List<PlayerIdUsername> playerIdUsernames = new ArrayList<>();
+        playersInChannel.stream()
+                .forEach(p -> playerIdUsernames.add(new PlayerIdUsername(playerRepository.findByUsername(p).get().getId(),p)));
+        return playerIdUsernames;
     }
 
     public void choosePokemons(String username, List<Integer> pokemonsId){
