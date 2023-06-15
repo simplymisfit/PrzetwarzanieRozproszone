@@ -22,6 +22,9 @@ public class Player {
     @Column(unique = true)
     private String username;
     private String password;
-    @OneToMany(mappedBy = "player")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "players_pokemons",
+            joinColumns = @JoinColumn(name="player_id"),
+            inverseJoinColumns = @JoinColumn(name = "pokemon_id"))
     private List<Pokemon> pokemons;
 }

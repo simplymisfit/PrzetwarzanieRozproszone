@@ -20,6 +20,7 @@ import javax.persistence.EntityExistsException;
 import java.net.ConnectException;
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -33,44 +34,26 @@ public class ApplicationService {
     public List<String> attackPlayer(int attackerId, int defenderId){
         Random generator = new Random();
         List<String> fight = new ArrayList<>();
-        attackerId =1; defenderId =2; //usunąć później ----------------------------------------------------------
-        Player attacker = new Player();
-        Player defender = new Player();
-        attacker.setId(1);
-        defender.setId(2);
-        attacker.setUsername("attacker");
-        defender.setUsername("defender");
-        Pokemon poks1 = new Pokemon(1,attacker,"poks1");
-        Pokemon poks2 = new Pokemon(2,attacker,"poks2");
-        Pokemon poks3 = new Pokemon(3,attacker,"poks3");
-        Pokemon poks4 = new Pokemon(4,attacker,"poks4");
-        Pokemon poks5 = new Pokemon(5,attacker,"poks5");
-        Pokemon poks6 = new Pokemon(6,attacker,"poks6");
-        Pokemon poks7 = new Pokemon(7,attacker,"poks7");
-        Pokemon poks8 = new Pokemon(8,attacker,"poks8");
-        //usunąć później ----------------------------------------------------------
+        Player attacker = playerRepository.findById(attackerId).get();
+        Player defender = playerRepository.findById(defenderId).get();
 
+        List<String> attackerPokemonNames = attacker
+                .getPokemons()
+                .stream()
+                .map(Pokemon::getName)
+                .collect(Collectors.toList());
+        List<String> defenderPokemonNames = defender
+                .getPokemons()
+                .stream()
+                .map(Pokemon::getName)
+                .collect(Collectors.toList());
 
-        List<String> attackerPokemonNames = new ArrayList<>();
-        attackerPokemonNames.add(poks1.getName());
-        attackerPokemonNames.add(poks2.getName());
-        attackerPokemonNames.add(poks3.getName());
-        attackerPokemonNames.add(poks4.getName());
-        List<String> defenderPokemonNames = new ArrayList<>();
-        defenderPokemonNames.add(poks5.getName());
-        defenderPokemonNames.add(poks6.getName());
-        defenderPokemonNames.add(poks7.getName());
-        defenderPokemonNames.add(poks8.getName());
         List<Integer> attackerPokemons = new ArrayList<>();
-        attackerPokemons.add(100);
-        attackerPokemons.add(100);
-        attackerPokemons.add(100);
-        attackerPokemons.add(100);
         List<Integer> defenderPokemons = new ArrayList<>();
-        defenderPokemons.add(100);
-        defenderPokemons.add(100);
-        defenderPokemons.add(100);
-        defenderPokemons.add(100);
+        for(int i =0;i<4;i++){
+            attackerPokemons.add(100);
+            defenderPokemons.add(100);
+        }
 
         while(true){
             int damage = generator.nextInt(21)+20;//od 20 do 40
@@ -127,6 +110,11 @@ public class ApplicationService {
         if(!playerRepository.findByUsername(player.getUsername()).equals(Optional.empty())){throw new EntityExistsException("Login zajęty");}
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         player.setPassword(passwordEncoder.encode(player.getPassword()));
+        List<Pokemon> pokemons = new ArrayList<>();
+        for(int i=1;i<=4;i++){
+            pokemons.add(pokemonRepository.findById(i).get());
+        }
+        player.setPokemons(pokemons);
         return playerRepository.save(player);
     }
 
@@ -198,6 +186,7 @@ public class ApplicationService {
     public void choosePokemons(String username, List<Integer> pokemonsId){
         Player player = playerRepository.findByUsername(username).get();
         player.setPokemons(getPokemonsById(pokemonsId));
+        playerRepository.save(player);
     }
     public List<Pokemon> getPokemonsById(List<Integer> pokemonsId){
         List<Pokemon> pokemons = new ArrayList<>();

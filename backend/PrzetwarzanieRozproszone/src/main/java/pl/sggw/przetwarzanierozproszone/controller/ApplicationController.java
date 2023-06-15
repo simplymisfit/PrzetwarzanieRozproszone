@@ -17,6 +17,7 @@ import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/api/game")
 public class ApplicationController {
     private ApplicationService applicationService;
     private RabbitTemplate template;
@@ -50,7 +51,7 @@ public class ApplicationController {
         }
     }
 
-    @PostMapping("/attack/{id}")
+    @PostMapping("/attack/{defenderId}")
     public List<String> attackPlayer(@PathVariable int defenderId){
         String username = applicationService.getPrincipalUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         int attackerId = applicationService.getUserByUsername(username).getId();
