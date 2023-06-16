@@ -27,4 +27,6 @@ public class Player {
             joinColumns = @JoinColumn(name="player_id"),
             inverseJoinColumns = @JoinColumn(name = "pokemon_id"))
     private List<Pokemon> pokemons;
+    private int loseCount;
+    private int winCount;
 }

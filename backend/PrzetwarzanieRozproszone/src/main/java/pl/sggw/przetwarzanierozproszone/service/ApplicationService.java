@@ -9,10 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
-import pl.sggw.przetwarzanierozproszone.domain.CustomMessage;
-import pl.sggw.przetwarzanierozproszone.domain.MyUserDetails;
-import pl.sggw.przetwarzanierozproszone.domain.Player;
-import pl.sggw.przetwarzanierozproszone.domain.Pokemon;
+import pl.sggw.przetwarzanierozproszone.domain.*;
 import pl.sggw.przetwarzanierozproszone.repository.PlayerRepository;
 import pl.sggw.przetwarzanierozproszone.repository.PokemonRepository;
 
@@ -36,6 +33,9 @@ public class ApplicationService {
         List<String> fight = new ArrayList<>();
         Player attacker = playerRepository.findById(attackerId).get();
         Player defender = playerRepository.findById(defenderId).get();
+
+        Player winner;
+        Player loser;
 
         List<String> attackerPokemonNames = attacker
                 .getPokemons()
@@ -74,6 +74,8 @@ public class ApplicationService {
             }
             if(defenderPokemons.size()==0){
                 fight.add("Wygrał gracz: "+attacker.getUsername());
+                winner = attacker;
+                loser = defender;
                 break;
             }
 
@@ -95,10 +97,14 @@ public class ApplicationService {
             }
             if(attackerPokemons.size()==0){
                 fight.add("Wygrał gracz: "+defender.getUsername());
+                winner = defender;
+                loser = attacker;
                 break;
             }
         }
 
+        playerRepository.updateWinCount(winner.getId(), winner.getWinCount()+1);
+        playerRepository.updateLoseCount(loser.getId(), loser.getLoseCount()+1);
 
         return fight;
     }
@@ -179,8 +185,11 @@ public class ApplicationService {
         return bool;
     }
 
-    public Set<String> getActivePlayers(){
-        return playersInChannel;
+    public List<PlayerIdUsername> getActivePlayers(){
+        List<PlayerIdUsername> playerIdUsernames = new ArrayList<>();
+        playersInChannel.stream()
+                .forEach(p -> playerIdUsernames.add(new PlayerIdUsername(playerRepository.findByUsername(p).get().getId(),p)));
+        return playerIdUsernames;
     }
 
     public void choosePokemons(String username, List<Integer> pokemonsId){
