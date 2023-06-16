@@ -8,7 +8,7 @@ const FormWrapper = styled.div`
   form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 30px;
     padding: 20px;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     border-radius: 4px;

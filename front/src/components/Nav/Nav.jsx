@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import Logo from "../../assets/images/Logo.png";
 import { motion } from "framer-motion";
 import { NavWrapper, NavLogo, Ul, Li } from "./Nav.styled";
 import { Link } from "react-router-dom";
+import { PokemonContext } from "../../providers/PokemonProvider";
 
 const Nav = () => {
   const [isOpen, setOpen] = React.useState(false);
+  const { setUser } = useContext(PokemonContext);
+
+  const logout = () => {
+    localStorage.clear();
+    setUser(null);
+  };
+
   return (
     <NavWrapper>
       <NavLogo>
@@ -25,7 +33,9 @@ const Nav = () => {
                 <Link to="/collection">Kolekcja</Link>
               </Li>
               <Li key="3">
-                <Link to="/">Wyloguj się</Link>
+                <Link onClick={logout} to="/">
+                  Wyloguj się
+                </Link>
               </Li>
             </Ul>
           ) : null}
@@ -47,7 +57,9 @@ const Nav = () => {
             <Link to="/collection">Kolekcja</Link>
           </Li>
           <Li key="3">
-            <Link to="/">Wyloguj się</Link>
+            <Link onClick={logout} to="/">
+              Wyloguj się
+            </Link>
           </Li>
         </Ul>
       )}

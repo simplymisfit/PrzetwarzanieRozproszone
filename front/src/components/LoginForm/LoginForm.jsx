@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { FormWrapper, Header, NoAccountWrapper } from "../RegistrationForm/RegistrationForm.styled";
 import { useForm } from "react-hook-form";
 import FormControl from "@mui/material/FormControl";
@@ -9,6 +9,7 @@ import Alert from "@mui/material/Alert";
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import Button from "@mui/material/Button";
+import { PokemonContext } from "../../providers/PokemonProvider";
 
 const LoginForm = ({ setIsLogin }) => {
   const {
@@ -18,9 +19,24 @@ const LoginForm = ({ setIsLogin }) => {
   } = useForm();
 
   const [open, setOpen] = useState(false);
+  const { setUser } = useContext(PokemonContext);
 
   const onSubmit = (data) => {
-    console.log("🚀 ~ file: RegistrationForm.jsx:11 ~ onSubmit ~ data:", data);
+    fetch("http://localhost:8080/api/auth/signin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: data.username, password: data.password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        localStorage.setItem("user", JSON.stringify(data));
+        setUser(data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
   return (
     <FormWrapper>
@@ -30,19 +46,20 @@ const LoginForm = ({ setIsLogin }) => {
           <InputLabel>Imię trenera</InputLabel>
           <OutlinedInput
             label="Imię trenera"
-            {...register("name", {
+            {...register("username", {
               required: "This field is required",
               minLength: { value: 3, message: "Ensure this value has at least 3 characters" },
             })}
-            error={!!errors.name}
+            error={!!errors.username}
           />
         </FormControl>
-        {errors.name?.type === "required" && <ErrorNotification message="This field is required" />}
-        {errors?.name?.type === "minLength" && <ErrorNotification message="Ensure this value has at least 3 characters" />}
+        {errors.username?.type === "required" && <ErrorNotification message="This field is required" />}
+        {errors?.username?.type === "minLength" && <ErrorNotification message="Ensure this value has at least 3 characters" />}
         <FormControl>
           <InputLabel>Hasło</InputLabel>
           <OutlinedInput
             label="Hasło"
+            type="password"
             {...register("password", {
               required: "This field is required",
               minLength: { value: 3, message: "Ensure this value has at least 3 characters" },

@@ -1,21 +1,13 @@
+import React, { useContext } from "react";
 import "./app.css";
-import { ThemeProvider } from "@mui/material/styles";
-import theme from "./styles/theme";
-import PokemonProvider from "./providers/PokemonProvider";
+import { PokemonContext } from "./providers/PokemonProvider";
 import Authorized from "./components/Authorized/Authorized";
 import Unauthorized from "./components/Unauthorized/Unauthorized";
 
 function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <PokemonProvider>
-        <div className="App">
-          {/* <Unauthorized /> */}
-          <Authorized />
-        </div>
-      </PokemonProvider>
-    </ThemeProvider>
-  );
+  const { user } = useContext(PokemonContext);
+
+  return <div className="App">{user?.username ? <Authorized /> : <Unauthorized />}</div>;
 }
 
 export default App;

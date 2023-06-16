@@ -27,6 +27,24 @@ const RegistrationForm = ({ setIsLogin }) => {
 
   const onSubmit = (data) => {
     console.log("🚀 ~ file: RegistrationForm.jsx:11 ~ onSubmit ~ data:", data);
+
+    // Send register request
+    fetch("http://localhost:8080/api/game/register ", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: data.username, password: data.password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Handle register response
+        console.log(data);
+        // ...
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const handleChangeDishType = (event) => {
@@ -66,11 +84,11 @@ const RegistrationForm = ({ setIsLogin }) => {
           <InputLabel>Imię trenera</InputLabel>
           <OutlinedInput
             label="Imię trenera"
-            {...register("name", {
+            {...register("username", {
               required: "This field is required",
               minLength: { value: 3, message: "Ensure this value has at least 3 characters" },
             })}
-            error={!!errors.name}
+            error={!!errors.username}
           />
         </FormControl>
         {errors.name?.type === "required" && <ErrorNotification message="This field is required" />}
@@ -79,6 +97,7 @@ const RegistrationForm = ({ setIsLogin }) => {
           <InputLabel>Hasło</InputLabel>
           <OutlinedInput
             label="Hasło"
+            type="password"
             {...register("password", {
               required: "This field is required",
               minLength: { value: 3, message: "Ensure this value has at least 3 characters" },
@@ -88,50 +107,7 @@ const RegistrationForm = ({ setIsLogin }) => {
         </FormControl>
         {errors.password?.type === "required" && <ErrorNotification message="This field is required" />}
         {errors?.password?.type === "minLength" && <ErrorNotification message="Ensure this value has at least 3 characters" />}
-        <FormControl>
-          <InputLabel>Powtórz hasło</InputLabel>
-          <OutlinedInput
-            label="Powtórz hasło"
-            {...register("repeatPassword", {
-              required: "This field is required",
-              minLength: { value: 3, message: "Ensure this value has at least 3 characters" },
-            })}
-            error={!!errors.name}
-          />
-        </FormControl>
-        {errors.name?.type === "required" && <ErrorNotification message="This field is required" />}
-        {errors?.name?.type === "minLength" && <ErrorNotification message="Ensure this value has at least 3 characters" />}
-        <FormControl>
-          <InputLabel>Email</InputLabel>
-          <OutlinedInput
-            label="Email"
-            {...register("email", {
-              required: "This field is required",
-              minLength: { value: 3, message: "Ensure this value has at least 3 characters" },
-            })}
-            error={!!errors.name}
-          />
-        </FormControl>
-        {errors.name?.type === "required" && <ErrorNotification message="This field is required" />}
-        {errors?.name?.type === "minLength" && <ErrorNotification message="Ensure this value has at least 3 characters" />}
 
-        <FormControl fullWidth>
-          <InputLabel>Pierwszy pokemon</InputLabel>
-          <Select
-            {...register("firstPokemon", {
-              required: "This field is required",
-            })}
-            value={starterPokemon}
-            label="Type"
-            onChange={handleChangeDishType}
-          >
-            <MenuItem value="bulbasaur">Bulbasaur</MenuItem>
-            <MenuItem value="charmander">Charmander</MenuItem>
-            <MenuItem value="squirtle">Squirtle</MenuItem>
-          </Select>
-        </FormControl>
-        {errors.type?.type === "required" && starterPokemon === "" && <ErrorNotification message="This field is required" />}
-        {renderPokemon(starterPokemon)}
         <Button type="submit" variant="contained" size="large" color="primary">
           Zarejestruj się
         </Button>

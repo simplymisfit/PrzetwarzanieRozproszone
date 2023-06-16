@@ -7,7 +7,7 @@ const Unauthorized = () => {
   const [isLogin, setIsLogin] = useState(true);
   return (
     <UnauthorizedWrapper>
-      <UnauthorizedBackground src={PokemonBackground} />
+      {/* <UnauthorizedBackground src={PokemonBackground} /> */}
       {isLogin ? <LoginForm setIsLogin={setIsLogin} /> : <RegistrationForm setIsLogin={setIsLogin} />}
     </UnauthorizedWrapper>
   );
