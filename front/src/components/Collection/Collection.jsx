@@ -1,24 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
   CollectionDescription,
-  RegionsWrapper,
-  RegionUl,
-  RegionLi,
   Options,
   Option,
   ImagesWrapper,
   ImageWrapper,
   PokemonImage,
   PokemonInfo,
+  PokemonNumberWrapper,
+  PokemonNumber,
+  LeftItemWrapper,
+  LeftItemHeader,
+  SetPokemonButton,
+  ButtonWrapper,
 } from "./Collection.styled";
-import { LeftItemWrapper, LeftItemHeader } from "../Locations/Locations.styled";
 import Squirtle from "./images/7.png";
 import PokemonModal from "../PokemonModal/PokemonModal";
+import { PokemonContext } from "../../providers/PokemonProvider";
 
 const Collection = () => {
-  // const [pokemons, setPokemons] = useState([]);
-  const [region, setRegion] = useState("Kanto");
   const [category, setCategory] = useState(0);
+  const [activePokemon, setActivePokemon] = useState(0);
+  console.log("🚀 ~ file: Collection.jsx:21 ~ Collection ~ activePokemon:", activePokemon);
+
+  const { team, setTeam, newTeam, setNewTeam } = useContext(PokemonContext);
+  console.log("🚀 ~ file: Collection.jsx:24 ~ Collection ~ newTeam:", newTeam);
+  const { user } = useContext(PokemonContext);
+  console.log("🚀 ~ file: Collection.jsx:25 ~ Collection ~ team:", team);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -26,50 +34,84 @@ const Collection = () => {
     setIsOpen(!isOpen);
   };
 
-  const categories = [
-    { name: "Kanto", value: 1 },
-    { name: "Johto", value: 2 },
-    { name: "Hoenn", value: 3 },
-    { name: "Sinnoh", value: 4 },
-    { name: "Unova", value: 5 },
-    { name: "Kalos", value: 6 },
-    { name: "Alola", value: 7 },
-  ];
+  const setPokemon = (pokemonId) => {
+    let data = [...newTeam];
+    data[activePokemon] = {
+      id: pokemonId,
+      name: "test",
+    };
+    setNewTeam(data);
+  };
+
+  const setPokemons = () => {
+    let pokemonsIds = [newTeam[0].id, newTeam[1].id, newTeam[2].id, newTeam[3].id];
+    fetch(`http://localhost:8080/api/game/setPokemons`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(pokemonsIds),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("🚀 ~ file: Fight.jsx:12 ~ handleAttack ~ data:", data);
+        // setBattleLog(data);
+      })
+      .catch((error) => console.error(error));
+  };
 
   return (
     <LeftItemWrapper>
-      <LeftItemHeader>Kolekcja</LeftItemHeader>
+      <LeftItemHeader>Kolekcja Pokemonów</LeftItemHeader>
       <CollectionDescription>
-        <RegionsWrapper>
-          <RegionUl>
-            {categories.map((item, id) => {
-              return (
-                <RegionLi key={id} isActive={region === item.name ? true : false} onClick={() => setRegion(item.name)}>
-                  {item.name}
-                </RegionLi>
-              );
-            })}
-          </RegionUl>
-        </RegionsWrapper>
-
         <Options>
           Pokaż:
           <Option onClick={() => setCategory(0)} isActive={category === 0 ? true : false}>
             Wszystkie
           </Option>
           <Option onClick={() => setCategory(1)} isActive={category === 1 ? true : false}>
-            Niezłapane
+            Dostępne
           </Option>
           <Option onClick={() => setCategory(2)} isActive={category === 2 ? true : false}>
-            Złapane
+            Niedostępne
           </Option>
         </Options>
+        <PokemonNumberWrapper>
+          <PokemonNumber isActive={activePokemon === 0 ? true : false} onClick={() => setActivePokemon(0)}>
+            1
+          </PokemonNumber>
+          <PokemonNumber isActive={activePokemon === 1 ? true : false} onClick={() => setActivePokemon(1)}>
+            2
+          </PokemonNumber>
+          <PokemonNumber isActive={activePokemon === 2 ? true : false} onClick={() => setActivePokemon(2)}>
+            3
+          </PokemonNumber>
+          <PokemonNumber isActive={activePokemon === 3 ? true : false} onClick={() => setActivePokemon(3)}>
+            4
+          </PokemonNumber>
+        </PokemonNumberWrapper>
         <ImagesWrapper>
-          <ImageWrapper onClick={() => toggleModal()}>
+          <ImageWrapper onClick={() => setPokemon(1)}>
             <PokemonImage src={Squirtle} />
-            <PokemonInfo>#1 Squirtle</PokemonInfo>
+            <PokemonInfo>#1 Bulbasaur</PokemonInfo>
+          </ImageWrapper>
+          <ImageWrapper onClick={() => setPokemon(2)}>
+            <PokemonImage src={Squirtle} />
+            <PokemonInfo>#2 Charmander</PokemonInfo>
+          </ImageWrapper>
+          <ImageWrapper onClick={() => setPokemon(3)}>
+            <PokemonImage src={Squirtle} />
+            <PokemonInfo>#3 Squirtle</PokemonInfo>
+          </ImageWrapper>
+          <ImageWrapper onClick={() => setPokemon(4)}>
+            <PokemonImage src={Squirtle} />
+            <PokemonInfo>#4 Squirtle</PokemonInfo>
           </ImageWrapper>
         </ImagesWrapper>
+        <ButtonWrapper>
+          <SetPokemonButton onClick={() => setPokemons()}>Wybierz Pokemony</SetPokemonButton>
+        </ButtonWrapper>
       </CollectionDescription>
       <PokemonModal isOpen={isOpen} toggleModal={toggleModal} />
     </LeftItemWrapper>

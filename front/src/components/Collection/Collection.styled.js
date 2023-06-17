@@ -16,27 +16,6 @@ const CollectionDescription = styled.div`
   border-top: 0;
 `;
 
-const RegionsWrapper = styled.div`
-  display: flex;
-`;
-
-const RegionUl = styled.ul`
-  display: flex;
-  list-style: none;
-`;
-
-const RegionLi = styled.li`
-  cursor: pointer;
-  padding: 10px 20px;
-  color: ${(props) => (props.isActive ? themeColors.colors.primary : null)};
-  border-right: ${(props) => (props.isActive ? "1px solid #ddd" : "1px solid transparent")};
-  border-left: ${(props) => (props.isActive ? "1px solid #ddd" : "1px solid transparent")};
-  border-bottom: ${(props) => (props.isActive ? "1px solid transparent" : "1px solid #ddd")};
-  &:hover {
-    color: ${themeColors.colors.primary};
-  }
-`;
-
 const Options = styled.div`
   display: flex;
   align-items: center;
@@ -53,7 +32,9 @@ const Option = styled.div`
 `;
 
 const ImagesWrapper = styled.div`
-  padding: 20px 0;
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
 `;
 
 const ImageWrapper = styled.div`
@@ -73,17 +54,66 @@ const PokemonInfo = styled.div`
   text-align: center;
 `;
 
+const PokemonNumberWrapper = styled.div`
+  display: flex;
+  padding: 10px 20px;
+  gap: 20px;
+`;
+
+const PokemonNumber = styled.div`
+  background-color: ${(props) => (props.isActive ? themeColors.colors.primary : "#fff")};
+  border: 1px solid #ddd;
+  border-color: ${(props) => (props.isActive ? themeColors.colors.stroke : "#ddd")};
+  color: ${(props) => (props.isActive ? "#fff" : "#000")};
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const LeftItemWrapper = styled.div``;
+const LeftItemHeader = styled.h3`
+  background: ${themeColors.colors.primary};
+  margin: 0;
+  border-radius: 10px 10px 0px 0px;
+  padding: 10px;
+  color: ${themeColors.colors.white};
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+`;
+
+const SetPokemonButton = styled.div`
+  cursor: pointer;
+  padding: 10px 20px;
+  width: fit-content;
+  color: ${themeColors.colors.primary};
+  border: 1px solid ${themeColors.colors.primary};
+  &:hover {
+    background: ${themeColors.colors.primary};
+    color: #fff;
+  }
+`;
+
 export {
   CollectionWrapper,
   CollectionHeader,
   CollectionDescription,
-  RegionsWrapper,
-  RegionUl,
-  RegionLi,
   Options,
   Option,
   ImagesWrapper,
   ImageWrapper,
   PokemonImage,
   PokemonInfo,
+  PokemonNumberWrapper,
+  PokemonNumber,
+  LeftItemWrapper,
+  LeftItemHeader,
+  SetPokemonButton,
+  ButtonWrapper,
 };
