@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   CollectionDescription,
   Options,
@@ -21,12 +21,9 @@ import { PokemonContext } from "../../providers/PokemonProvider";
 const Collection = () => {
   const [category, setCategory] = useState(0);
   const [activePokemon, setActivePokemon] = useState(0);
-  console.log("🚀 ~ file: Collection.jsx:21 ~ Collection ~ activePokemon:", activePokemon);
-
-  const { team, setTeam, newTeam, setNewTeam } = useContext(PokemonContext);
-  console.log("🚀 ~ file: Collection.jsx:24 ~ Collection ~ newTeam:", newTeam);
+  const [pokemonList, setPokemonList] = useState([]);
+  const { team, setTeam, newTeam, setNewTeam, setPokemons } = useContext(PokemonContext);
   const { user } = useContext(PokemonContext);
-  console.log("🚀 ~ file: Collection.jsx:25 ~ Collection ~ team:", team);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -43,20 +40,21 @@ const Collection = () => {
     setNewTeam(data);
   };
 
-  const setPokemons = () => {
-    let pokemonsIds = [newTeam[0].id, newTeam[1].id, newTeam[2].id, newTeam[3].id];
-    fetch(`http://localhost:8080/api/game/setPokemons`, {
-      method: "POST",
+  useEffect(() => {
+    getPokemonList();
+  }, []);
+
+  const getPokemonList = () => {
+    fetch(`http://localhost:8080/api/game/pokemonList`, {
+      method: "GET",
       headers: {
-        Authorization: `Bearer ${user.accessToken}`,
+        Authorization: `Bearer ${user?.accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(pokemonsIds),
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("🚀 ~ file: Fight.jsx:12 ~ handleAttack ~ data:", data);
-        // setBattleLog(data);
+        setPokemonList(data);
       })
       .catch((error) => console.error(error));
   };
@@ -92,22 +90,53 @@ const Collection = () => {
           </PokemonNumber>
         </PokemonNumberWrapper>
         <ImagesWrapper>
-          <ImageWrapper onClick={() => setPokemon(1)}>
-            <PokemonImage src={Squirtle} />
-            <PokemonInfo>#1 Bulbasaur</PokemonInfo>
-          </ImageWrapper>
-          <ImageWrapper onClick={() => setPokemon(2)}>
-            <PokemonImage src={Squirtle} />
-            <PokemonInfo>#2 Charmander</PokemonInfo>
-          </ImageWrapper>
-          <ImageWrapper onClick={() => setPokemon(3)}>
-            <PokemonImage src={Squirtle} />
-            <PokemonInfo>#3 Squirtle</PokemonInfo>
-          </ImageWrapper>
-          <ImageWrapper onClick={() => setPokemon(4)}>
-            <PokemonImage src={Squirtle} />
-            <PokemonInfo>#4 Squirtle</PokemonInfo>
-          </ImageWrapper>
+          {pokemonList?.map((pokemon, id) => {
+            return (
+              <ImageWrapper key={id} inTeam={newTeam[activePokemon]?.id == pokemon.id} onClick={() => setPokemon(pokemon.id)}>
+                <PokemonImage isActive={true} src={pokemon.photoUrl} />
+                <PokemonInfo inTeam={newTeam[activePokemon]?.id == pokemon.id} isActive={true}>
+                  #{pokemon.id} {pokemon.name}
+                </PokemonInfo>
+              </ImageWrapper>
+            );
+          })}
+          {/* {category == 0
+            ? pokemonList?.map((pokemon, id) => {
+                return (
+                  <ImageWrapper
+                    inTeam={newTeam[activePokemon].id == pokemon.id}
+                    onClick={() => (playerPokemonsIds.includes(pokemon.id) ? setPokemon(pokemon.id) : null)}
+                  >
+                    <PokemonImage isActive={playerPokemonsIds.includes(pokemon.id)} src={pokemon.photoUrl} />
+                    <PokemonInfo inTeam={newTeam[activePokemon].id == pokemon.id} isActive={playerPokemonsIds.includes(pokemon.id)}>
+                      #{pokemon.id} {pokemon.name}
+                    </PokemonInfo>
+                  </ImageWrapper>
+                );
+              })
+            : [
+                category == 1
+                  ? playerPokemons?.map((pokemon, id) => {
+                      return (
+                        <ImageWrapper inTeam={newTeam[activePokemon].id == pokemon.id} onClick={() => setPokemon(pokemon.id)}>
+                          <PokemonImage isActive={true} src={pokemon.photoUrl} />
+                          <PokemonInfo inTeam={newTeam[activePokemon].id == pokemon.id} isActive={true}>
+                            #{pokemon.id} {pokemon.name}
+                          </PokemonInfo>
+                        </ImageWrapper>
+                      );
+                    })
+                  : pokemonList?.map((pokemon, id) => {
+                      return playerPokemonsIds.includes(pokemon.id) ? null : (
+                        <ImageWrapper>
+                          <PokemonImage isActive={false} src={pokemon.photoUrl} />
+                          <PokemonInfo isActive={false}>
+                            #{pokemon.id} {pokemon.name}
+                          </PokemonInfo>
+                        </ImageWrapper>
+                      );
+                    }),
+              ]} */}
         </ImagesWrapper>
         <ButtonWrapper>
           <SetPokemonButton onClick={() => setPokemons()}>Wybierz Pokemony</SetPokemonButton>

@@ -18,6 +18,7 @@ import { PokemonContext } from "../../providers/PokemonProvider";
 const Team = () => {
   const [isOpen, setOpen] = useState(true);
   const { team } = useContext(PokemonContext);
+  console.log("🚀 ~ file: Team.jsx:21 ~ Team ~ team:", team);
 
   let pokemons = [
     { name: "Pikachu ", lvl: 10, hp: 2431, hpNeeded: 2700, exp: 10, expNeeded: 100 },
@@ -36,15 +37,15 @@ const Team = () => {
       </RightItemHeader>
       {isOpen ? (
         <TeamDescription>
-          {pokemons.map((pokemon, id) => {
+          {team?.map((pokemon, id) => {
             return (
               <PokemonWrapper key={id}>
-                <PokemonImage src={Pokemon} />
+                <PokemonImage src={pokemon.photoUrl} />
                 <PokemonStats>
                   <PokemonName>{pokemon.name}</PokemonName>
                   <ProgressBarWrapper color="#fb1b1b">
                     <ProgressBarEXP>
-                      <span>ATAK: {pokemon.exp}</span>
+                      <span>ATAK: {pokemon.attack}</span>
                     </ProgressBarEXP>
                   </ProgressBarWrapper>
                   <ProgressBarWrapper color="green">

@@ -36,6 +36,7 @@ function Fight() {
     fetch(`http://localhost:8080/api/game/activePlayers`, {
       method: "GET",
       headers: {
+        Authorization: `Bearer ${user?.accessToken}`,
         "Content-Type": "application/json",
       },
     })
@@ -50,7 +51,7 @@ function Fight() {
     fetch(`http://localhost:8080/api/game/attack/${defenderId}`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${user.accessToken}`,
+        Authorization: `Bearer ${user?.accessToken}`,
         "Content-Type": "application/json",
       },
     })
@@ -96,8 +97,8 @@ function Fight() {
           {players?.length == 0 ? <p>Wcztywanie...</p> : null}
           {players?.map((player, id) => {
             return (
-              <Player key={id} onClick={() => handleAttack(player.id)}>
-                {player.username}
+              <Player key={id} onClick={() => handleAttack(player?.id)}>
+                {player?.username}
               </Player>
             );
           })}

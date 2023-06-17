@@ -16,6 +16,7 @@ const PokemonWrapper = styled.div`
 
 const PokemonImage = styled.img`
   padding: 10px;
+  width: 100px;
 `;
 
 const PokemonStats = styled.div`

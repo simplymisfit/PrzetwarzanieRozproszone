@@ -20,7 +20,7 @@ const Options = styled.div`
   display: flex;
   align-items: center;
   padding: 20px;
-  padding-left: 40px;
+  padding-left: 20px;
   gap: 10px;
 `;
 
@@ -43,15 +43,25 @@ const ImageWrapper = styled.div`
   border-radius: 4px;
   padding: 6px 12px;
   cursor: pointer;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  border-color: ${(props) => (props.inTeam ? themeColors.colors.primary : "#ddd")};
 `;
 
 const PokemonImage = styled.img`
   width: 100px;
-  height: 100px;
+  max-height: 100px;
+  opacity: ${(props) => (props.isActive ? "100%" : "30%")};
 `;
 
 const PokemonInfo = styled.div`
   text-align: center;
+  filter: ${(props) => (props.isActive ? "contrast(100%);" : "contrast(0%);")};
+  color: ${(props) => (props.inTeam ? themeColors.colors.primary : "#000")};
 `;
 
 const PokemonNumberWrapper = styled.div`
@@ -65,8 +75,8 @@ const PokemonNumber = styled.div`
   border: 1px solid #ddd;
   border-color: ${(props) => (props.isActive ? themeColors.colors.stroke : "#ddd")};
   color: ${(props) => (props.isActive ? "#fff" : "#000")};
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
