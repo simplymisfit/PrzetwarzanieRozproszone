@@ -1,12 +1,25 @@
 package pl.sggw.przetwarzanierozproszone.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class PlayerIdUsername {
     private int id;
     private String username;
+
+    public PlayerIdUsername(int id, String username) {
+        this.id = id;
+        this.username = username;
+    }
+
+    public PlayerIdUsername() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
 }
+
