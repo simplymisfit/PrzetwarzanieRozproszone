@@ -39,8 +39,8 @@ const ProgressBarWrapper = styled.div`
 `;
 
 const ProgressBarHP = styled.div`
-  width: ${(props) => `${(props.hp / props.hpNeeded) * 100}%`};
-  background-color: #fb1b1b;
+  width: 100%;
+  background-color: green;
   height: 17px;
   span {
     position: absolute;
@@ -56,8 +56,8 @@ const ProgressBarHP = styled.div`
 `;
 
 const ProgressBarEXP = styled.div`
-  width: ${(props) => `${(props.exp / props.expNeeded) * 100}%`};
-  background-color: #5132c0;
+  width: 100%;
+  background-color: #fb1b1b;
   height: 17px;
   span {
     position: absolute;

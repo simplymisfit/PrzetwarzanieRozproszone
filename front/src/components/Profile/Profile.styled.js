@@ -15,10 +15,20 @@ const RightItemHeader = styled.h3`
 `;
 
 const ProfileDescription = styled.div`
-  height: 200px;
   border: 1px solid ${themeColors.colors.stroke};
   border-radius: 0px 0px 10px 10px;
   border-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  p {
+    margin: 0;
+  }
 `;
 
-export { RightItemWrapper, RightItemHeader, ProfileDescription };
+const UserName = styled.h3`
+  margin: 0;
+`;
+
+export { RightItemWrapper, RightItemHeader, ProfileDescription, UserName };
