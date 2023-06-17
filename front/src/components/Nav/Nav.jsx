@@ -27,10 +27,10 @@ const Nav = () => {
           {isOpen ? (
             <Ul>
               <Li key="1">
-                <Link to="/locations">Lokacje</Link>
+                <Link to="/fight">Walka</Link>
               </Li>
               <Li key="2">
-                <Link to="/collection">Kolekcja</Link>
+                <Link to="/">Kolekcja</Link>
               </Li>
               <Li key="3">
                 <Link onClick={logout} to="/">
@@ -51,10 +51,10 @@ const Nav = () => {
       ) : (
         <Ul>
           <Li key="1">
-            <Link to="/locations">Lokacje</Link>
+            <Link to="/fight">Walka</Link>
           </Li>
           <Li key="2">
-            <Link to="/collection">Kolekcja</Link>
+            <Link to="/">Kolekcja</Link>
           </Li>
           <Li key="3">
             <Link onClick={logout} to="/">

@@ -3,11 +3,10 @@ import Nav from "../Nav/Nav";
 import { AuthorizedWrapper, LeftWrapper, RightWrapper } from "./Authorized.styled";
 import Profile from "../Profile/Profile";
 import Team from "../Team/Team";
-import Location from "../Locations/Locations";
-import Expedition from "../Expedition/Expedition";
 import Chat from "../Chat/Chat";
 import Collection from "../Collection/Collection";
 import { Routes, Route } from "react-router-dom";
+import Fight from "../Fight/Fight";
 
 const Authorized = () => {
   return (
@@ -16,11 +15,8 @@ const Authorized = () => {
       <AuthorizedWrapper>
         <LeftWrapper>
           <Routes>
-            <Route path="/locations" exact element={<Location />} />
-            <Route path="/expedition" exact element={<Expedition />} />
-            <Route path="/collection" exact element={<Collection />} />
-
-            {/* <Route path="/"></Route> */}
+            <Route path="/fight" exact element={<Fight />} />
+            <Route path="/" exact element={<Collection />} />
           </Routes>
         </LeftWrapper>
         <RightWrapper>
