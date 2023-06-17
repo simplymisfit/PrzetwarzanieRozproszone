@@ -117,7 +117,7 @@ public class ApplicationService {
 
     private void addRandomPokemons(int userId, int pokemonCount){
         Random rd = new Random();
-        List<Integer> pokemonIds = new ArrayList<Integer>();
+        List<Integer> pokemonIds = new ArrayList<>();
         var player = playerRepository.findById(userId);
 
         for (int i = 0; i < pokemonCount; i++) {
@@ -633,5 +633,14 @@ public class ApplicationService {
         pokemonRepository.save(pokemon50);
 
 
+    }
+
+    public List<Pokemon> getPlayerPokemons(String username){
+        Player p = playerRepository.findByUsername(username).get();
+        return playerRepository.findByUsername(username).get().getPokemons();
+    }
+
+    public List<Pokemon> getPokemonList(){
+        return pokemonRepository.findAll();
     }
 }

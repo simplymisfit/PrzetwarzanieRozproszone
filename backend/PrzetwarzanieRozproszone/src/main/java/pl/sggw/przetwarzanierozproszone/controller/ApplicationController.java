@@ -10,6 +10,7 @@ import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
 import pl.sggw.przetwarzanierozproszone.domain.CustomMessage;
 import pl.sggw.przetwarzanierozproszone.domain.Player;
 import pl.sggw.przetwarzanierozproszone.domain.PlayerIdUsername;
+import pl.sggw.przetwarzanierozproszone.domain.Pokemon;
 import pl.sggw.przetwarzanierozproszone.enums.ChannelEnum;
 import pl.sggw.przetwarzanierozproszone.service.ApplicationService;
 
@@ -69,5 +70,16 @@ public class ApplicationController {
     @GetMapping("/activePlayers")
     public List<PlayerIdUsername> getActivePlayers(){
         return applicationService.getActivePlayers();
+    }
+
+    @GetMapping("/playerPokemons")
+    public List<Pokemon> getPlayerPokemons(){
+        String username = applicationService.getPrincipalUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return applicationService.getPlayerPokemons(username);
+    }
+
+    @GetMapping("/pokemonList")
+    public List<Pokemon> getPokemonList(){
+        return applicationService.getPokemonList();
     }
 }
