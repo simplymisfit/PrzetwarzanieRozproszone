@@ -1,16 +1,40 @@
-import React, { useState } from "react";
-import { ChatDescription, BottomPanel, MessagesWrapper } from "./Chat.styled";
+import React, { useState, useContext } from "react";
+import { ChatDescription, BottomPanel, MessagesWrapper, Message } from "./Chat.styled";
 import { RightItemWrapper, RightItemHeader } from "../Profile/Profile.styled";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-// import Textarea from '@mui/joy/Textarea';
 import TextareaAutosize from "@mui/base/TextareaAutosize";
 import Button from "@mui/material/Button";
 import themeColors from "../../styles/colors";
 import styled from "styled-components";
+import { PokemonContext } from "../../providers/PokemonProvider";
 
 const Chat = () => {
   const [isOpen, setOpen] = useState(true);
+  const [newMessage, setNewMessage] = useState("");
+  const [messages, setMessages] = useState([]);
+  const { user } = useContext(PokemonContext);
+  const sendMessage = (message) => {
+    let previousMessages = [...messages];
+    previousMessages.push(newMessage);
+    setMessages(previousMessages);
+    setNewMessage("");
+    const textarea = document.getElementById("message");
+    textarea.value = "";
+    fetch("http://localhost:8080/api/game/chat", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${user.accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: message }),
+    })
+      .then((response) => response.json())
+      .then((data) => {})
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   return (
     <RightItemWrapper>
@@ -20,10 +44,22 @@ const Chat = () => {
       </RightItemHeader>
       {isOpen ? (
         <ChatDescription>
-          <MessagesWrapper></MessagesWrapper>
+          <MessagesWrapper>
+            {messages?.map((message, id) => {
+              return <Message>{message}</Message>;
+            })}
+          </MessagesWrapper>
           <BottomPanel>
-            <StyledTextarea color="primary" minRows={1} variant="outlined" size="md" placeholder="Wiadomość" />
-            <Button variant="contained" size="medium" color="primary">
+            <StyledTextarea
+              id="message"
+              onChange={(e) => setNewMessage(e.target.value)}
+              color="primary"
+              minRows={1}
+              variant="outlined"
+              size="md"
+              placeholder="Wiadomość"
+            />
+            <Button variant="contained" size="medium" color="primary" onClick={() => sendMessage(newMessage)}>
               Wyślij
             </Button>
           </BottomPanel>

@@ -8,7 +8,9 @@ const ChatDescription = styled.div`
 `;
 
 const MessagesWrapper = styled.div`
-  height: 250px;
+  height: 150px;
+  overflow-y: scroll;
+  padding: 20px;
 `;
 
 const BottomPanel = styled.div`
@@ -20,4 +22,8 @@ const BottomPanel = styled.div`
   gap: 5px;
 `;
 
-export { ChatDescription, BottomPanel, MessagesWrapper };
+const Message = styled.div`
+  margin-bottom: 5px;
+`;
+
+export { ChatDescription, BottomPanel, MessagesWrapper, Message };
