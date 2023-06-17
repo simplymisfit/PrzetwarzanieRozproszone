@@ -70,9 +70,4 @@ public class ApplicationController {
     public List<PlayerIdUsername> getActivePlayers(){
         return applicationService.getActivePlayers();
     }
-
-//    @GetMapping("/initializePokemons")
-//    public void initializePokemons() {
-//        applicationService.initializePokemons();
-//    }
 }

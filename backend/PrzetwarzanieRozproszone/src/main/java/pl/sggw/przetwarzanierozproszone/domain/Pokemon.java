@@ -18,14 +18,13 @@ import java.util.Collection;
 
 public class Pokemon {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "pokemons")
     private Collection<Player> players;
     private String name;
-//    private int attack;
-//    private int hp;
-//    private String photoUrl;
+    private int attack;
+    private int hp;
+    private String photoUrl;
 }
