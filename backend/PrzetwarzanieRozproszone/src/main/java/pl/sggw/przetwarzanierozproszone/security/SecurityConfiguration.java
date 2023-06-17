@@ -56,8 +56,18 @@ public class SecurityConfiguration extends WebMvcConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().mvcMatchers("/api/auth/**","/isonline").permitAll()
-                .mvcMatchers("/api/game/","/api/game/channel").authenticated()
+                .authorizeRequests().mvcMatchers("/api/auth/**").permitAll()
+                .mvcMatchers("/api/game/",
+                        "/api/game/channel",
+                        "/api/game/playerPokemons",
+                        "/api/game/chat",
+                        "/api/game/attack/*",
+                        "/api/game/setPokemons",
+                        "/api/game/activePlayers",
+                        "/api/game/pokemonList",
+                        "/api/game/",
+                        "/api/game/"
+                        ).authenticated()
                 .mvcMatchers("/api/game/register").permitAll();
 
         http.authenticationProvider(authenticationProvider());
