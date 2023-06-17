@@ -71,5 +71,8 @@ public class ApplicationController {
         return applicationService.getActivePlayers();
     }
 
-
+    @GetMapping("/initializePokemons")
+    public void initializePokemons() {
+        applicationService.initializePokemons();
+    }
 }
