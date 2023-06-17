@@ -103,9 +103,9 @@ public class ApplicationService {
             }
         }
 
-        playerRepository.updateWinCount(winner.getId(), winner.getWinCount()+1);
-        playerRepository.updateLoseCount(loser.getId(), loser.getLoseCount()+1);
-        addRandomPokemons(winner.getId(), 1);
+//        playerRepository.updateWinCount(winner.getId(), winner.getWinCount()+1);
+//        playerRepository.updateLoseCount(loser.getId(), loser.getLoseCount()+1);
+//        addRandomPokemons(winner.getId(), 1);
 
         return fight;
     }
