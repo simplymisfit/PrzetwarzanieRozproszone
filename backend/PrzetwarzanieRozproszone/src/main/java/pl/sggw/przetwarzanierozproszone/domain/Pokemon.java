@@ -25,7 +25,7 @@ public class Pokemon {
     @ManyToMany(mappedBy = "pokemons")
     private Collection<Player> players;
     private String name;
-    private int attack;
-    private int hp;
-    private String photoUrl;
+//    private int attack;
+//    private int hp;
+//    private String photoUrl;
 }
