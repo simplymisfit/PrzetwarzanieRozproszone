@@ -104,8 +104,12 @@ public class ApplicationService {
             }
         }
 
-        playerRepository.updateWinCount(winner.getId(), winner.getWinCount()+1);
-        playerRepository.updateLoseCount(loser.getId(), loser.getLoseCount()+1);
+        int winnerId = winner.getId();
+        int winnerWinCount = winner.getWinCount()+1;
+        int loserId = loser.getId();
+        int loserLoseCount = loser.getLoseCount()+1;
+        playerRepository.updateWinCount(winnerId, winnerWinCount);
+        playerRepository.updateLoseCount(loserId, loserLoseCount);
         addRandomPokemons(winner.getId(), 1);
 
         return fight;
