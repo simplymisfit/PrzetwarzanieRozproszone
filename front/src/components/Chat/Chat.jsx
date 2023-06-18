@@ -13,7 +13,7 @@ const Chat = () => {
   const [isOpen, setOpen] = useState(true);
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const { user } = useContext(PokemonContext);
+  const { user, channel } = useContext(PokemonContext);
   const sendMessage = (message) => {
     let previousMessages = [...messages];
     previousMessages.push(newMessage);
@@ -21,7 +21,7 @@ const Chat = () => {
     setNewMessage("");
     const textarea = document.getElementById("message");
     textarea.value = "";
-    fetch("http://localhost:8080/api/game/chat", {
+    fetch(`${channel}/api/game/chat`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${user?.accessToken}`,

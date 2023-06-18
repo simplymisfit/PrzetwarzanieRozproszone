@@ -4,22 +4,30 @@ export const PokemonContext = createContext(undefined);
 
 const PokemonProvider = (props) => {
   const [user, setUser] = useState(null);
+  const channel = JSON.parse(localStorage.getItem("channel"));
   const [wins, setWins] = useState(0);
   const [loses, setLoses] = useState(0);
   const [team, setTeam] = useState([]);
   const [newTeam, setNewTeam] = useState([]);
 
   useEffect(() => {
+    const loggedInUser = localStorage.getItem("user");
+    setUser(JSON.parse(loggedInUser));
+  }, []);
+
+  useEffect(() => {
     setNewTeam(team);
   }, [team]);
 
   useEffect(() => {
-    getWinsAndLoses();
-    getPlayerPokemons();
+    if (user?.username) {
+      getWinsAndLoses();
+      getPlayerPokemons();
+    }
   }, [user]);
 
   const getPlayerPokemons = () => {
-    fetch(`http://localhost:8080/api/game/playerPokemons`, {
+    fetch(`${channel}/api/game/playerPokemons`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${user?.accessToken}`,
@@ -44,7 +52,7 @@ const PokemonProvider = (props) => {
   };
 
   const getWinsAndLoses = () => {
-    fetch(`http://localhost:8080/api/game/getWinsAndLoses`, {
+    fetch(`${channel}/api/game/getWinsAndLoses`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${user?.accessToken}`,
@@ -53,7 +61,6 @@ const PokemonProvider = (props) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("🚀 ~ file: PokemonProvider.js:39 ~ .then ~ data:", data);
         if (data?.error) {
         } else {
           setWins(data[0]);
@@ -66,7 +73,7 @@ const PokemonProvider = (props) => {
   const setPokemons = () => {
     let pokemonsIds = [newTeam[0].id, newTeam[1].id, newTeam[2].id, newTeam[3].id];
 
-    fetch(`http://localhost:8080/api/game/setPokemons`, {
+    fetch(`${channel}/api/game/setPokemons`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${user?.accessToken}`,
@@ -79,11 +86,6 @@ const PokemonProvider = (props) => {
       .catch((error) => console.error(error));
   };
 
-  useEffect(() => {
-    const loggedInUser = localStorage.getItem("user");
-    setUser(JSON.parse(loggedInUser));
-  }, []);
-
   const providerData = {
     user: user,
     setUser: setUser,
@@ -95,6 +97,7 @@ const PokemonProvider = (props) => {
     wins: wins,
     loses: loses,
     getWinsAndLoses: getWinsAndLoses,
+    channel: channel,
   };
 
   return <PokemonContext.Provider value={providerData}>{props.children}</PokemonContext.Provider>;
