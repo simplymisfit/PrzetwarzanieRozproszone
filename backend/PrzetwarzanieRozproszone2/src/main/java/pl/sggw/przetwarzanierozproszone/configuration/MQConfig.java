@@ -11,12 +11,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MQConfig {
 
-    public static final String SEND_QUEUE = "message_queue1";
-    public static final String LISTEN_QUEUE = "message_queue2";
-    public static final String EXCHANGE1 = "message_exchange1";
-    public static final String EXCHANGE2 = "message_exchange2";
-    public static final String ROUTING_KEY1 = "1";
-    public static final String ROUTING_KEY2 = "2";
+    public static final String SEND_QUEUE = "message_queue2";
+    public static final String LISTEN_QUEUE = "message_queue1";
+    public static final String EXCHANGE1 = "message_exchange2";
+    public static final String EXCHANGE2 = "message_exchange1";
+    public static final String ROUTING_KEY1 = "2";
+    public static final String ROUTING_KEY2 = "1";
 
     @Bean
     public Queue queue() {

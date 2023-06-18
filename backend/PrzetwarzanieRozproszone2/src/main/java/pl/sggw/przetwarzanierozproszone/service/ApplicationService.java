@@ -207,7 +207,7 @@ public class ApplicationService {
         if (minutes.length()==1)
             minutes="0"+minutes;
         message.setMessage("["+message.getMessageDate().getHours() + ":" + minutes + "] Wylogowano z kanału "+environment.getProperty("server.number")+": "+username);
-        template.convertAndSend(MQConfig.EXCHANGE1, MQConfig.ROUTING_KEY1, message);
+        template.convertAndSend(MQConfig.EXCHANGE2, MQConfig.ROUTING_KEY2, message);
         chatMessages.add(message.getMessage());
         sendToAllEmitters(message.getMessage());
     }
