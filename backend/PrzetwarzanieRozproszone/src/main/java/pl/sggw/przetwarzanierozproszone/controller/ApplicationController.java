@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -25,17 +26,16 @@ import java.util.*;
 public class ApplicationController {
     private ApplicationService applicationService;
     private RabbitTemplate template;
-    private final List<String> chatMessages = new ArrayList<>();
-    private final List<SseEmitter> emitters = new ArrayList<>();
     @PostMapping("/register")
     public Player processRegister(@RequestBody Player player) {
         return applicationService.createPlayer(player);
     }
+    @Async
     @GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter getChatMessages() {
-        SseEmitter emitter = new SseEmitter();
-        emitters.add(emitter);
-        sendChatHistory(emitter);
+        SseEmitter emitter = new SseEmitter(-1L);//nieskończony timeout
+        applicationService.emitters.add(emitter);
+        applicationService.sendChatHistory(emitter);
         return emitter;
     }
 
@@ -63,41 +63,10 @@ public class ApplicationController {
 
             template.convertAndSend(exchange, routingKey, message);
         }
-        chatMessages.add(msg);
-        sendToAllEmitters(msg);
+        applicationService.chatMessages.add(msg);
+        applicationService.sendToAllEmitters(msg);
     }
 
-    private String returnMessage(CustomMessage message){
-        return returnDate(message.getMessageDate()) + " | " + message.getPlayerName() + " : " + message.getMessage();
-    }
-
-    private String returnDate(Date date){
-        return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    }
-
-    private void sendChatHistory(SseEmitter emitter) {
-        try {
-            for (String message : chatMessages) {
-                emitter.send(message, MediaType.TEXT_PLAIN);
-            }
-        } catch (IOException e) {
-            emitter.completeWithError(e);
-        }
-    }
-
-    private void sendToAllEmitters(String message) {
-        Iterator<SseEmitter> iterator = emitters.iterator();
-
-        while (iterator.hasNext()) {
-            SseEmitter emitter = iterator.next();
-            try {
-                emitter.send(message, MediaType.TEXT_PLAIN);
-            } catch (IOException e) {
-                emitter.completeWithError(e);
-                iterator.remove();
-            }
-        }
-    }
 
     @PostMapping("/attack/{defenderId}")
     public List<String> attackPlayer(@PathVariable int defenderId){

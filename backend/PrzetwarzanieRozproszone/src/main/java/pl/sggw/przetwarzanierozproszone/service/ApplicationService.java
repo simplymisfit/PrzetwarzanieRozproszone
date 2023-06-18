@@ -5,9 +5,11 @@ import org.hibernate.type.TrueFalseType;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
 import pl.sggw.przetwarzanierozproszone.domain.*;
 import pl.sggw.przetwarzanierozproszone.repository.PlayerRepository;
@@ -15,6 +17,7 @@ import pl.sggw.przetwarzanierozproszone.repository.PokemonRepository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityExistsException;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.security.Principal;
 import java.util.*;
@@ -28,6 +31,8 @@ public class ApplicationService {
     private RabbitTemplate template;
     private PokemonRepository pokemonRepository;
     Set<String> playersInChannel;
+    public final List<String> chatMessages = new ArrayList<>();
+    public final List<SseEmitter> emitters = new ArrayList<>();
 
     public List<String> attackPlayer(int attackerId, int defenderId){
         Random generator = new Random();
@@ -189,6 +194,8 @@ public class ApplicationService {
         message.setMessage("["+message.getMessageDate().getHours() + ":" + message.getMessageDate().getMinutes() + "] Zalogowano na kanał "+environment.getProperty("server.number")+": "+username);
         template.convertAndSend(MQConfig.EXCHANGE2, MQConfig.ROUTING_KEY2, message);
         //template.convertAndSend(MQConfig.EXCHANGE1, MQConfig.ROUTING_KEY1, message);
+        chatMessages.add(message.getMessage());
+        sendToAllEmitters(message.getMessage());
     }
     public void sendNotificationOnPlayerLogout(String username){
         CustomMessage message = new CustomMessage();
@@ -196,6 +203,8 @@ public class ApplicationService {
         message.setMessageDate(new Date());
         message.setMessage("["+message.getMessageDate().getHours() + ":" + message.getMessageDate().getMinutes() + "] Wylogowano z kanału "+environment.getProperty("server.number")+": "+username);
         //template.convertAndSend(MQConfig.EXCHANGE1, MQConfig.ROUTING_KEY1, message);
+        chatMessages.add(message.getMessage());
+        sendToAllEmitters(message.getMessage());
     }
 
     public boolean logout(String username){
@@ -649,5 +658,35 @@ public class ApplicationService {
                 playerRepository.findByUsername(username).get().getWinCount(),
                 playerRepository.findByUsername(username).get().getLoseCount()
         };
+    }
+
+    public String returnMessage(CustomMessage message){
+        return returnDate(message.getMessageDate()) + " | " + message.getPlayerName() + " : " + message.getMessage();
+    }
+    public String returnDate(Date date){
+        return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    }
+    public void sendChatHistory(SseEmitter emitter) {
+        try {
+            for (String message : chatMessages) {
+                emitter.send(message, MediaType.TEXT_PLAIN);
+            }
+        } catch (IOException e) {
+            emitter.completeWithError(e);
+        }
+    }
+
+    public void sendToAllEmitters(String message) {
+        Iterator<SseEmitter> iterator = emitters.iterator();
+
+        while (iterator.hasNext()) {
+            SseEmitter emitter = iterator.next();
+            try {
+                emitter.send(message, MediaType.TEXT_PLAIN);
+            } catch (IOException e) {
+                emitter.completeWithError(e);
+                iterator.remove();
+            }
+        }
     }
 }

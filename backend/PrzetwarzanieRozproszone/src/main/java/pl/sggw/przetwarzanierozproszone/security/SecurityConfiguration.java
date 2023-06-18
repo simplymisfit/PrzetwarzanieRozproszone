@@ -60,7 +60,7 @@ public class SecurityConfiguration extends WebMvcConfigurerAdapter {
                 .mvcMatchers("/api/game/",
                         "/api/game/channel",
                         "/api/game/playerPokemons",
-                        "/api/game/chat",
+                        //"/api/game/chat",
                         "/api/game/attack/*",
                         "/api/game/setPokemons",
                         "/api/game/activePlayers",
