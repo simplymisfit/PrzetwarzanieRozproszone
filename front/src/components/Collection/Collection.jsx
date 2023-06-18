@@ -23,7 +23,7 @@ const Collection = () => {
   const [activePokemon, setActivePokemon] = useState(0);
   const [pokemonList, setPokemonList] = useState([]);
   const { team, setTeam, newTeam, setNewTeam, setPokemons } = useContext(PokemonContext);
-  const { user } = useContext(PokemonContext);
+  const { user, channel } = useContext(PokemonContext);
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -45,7 +45,7 @@ const Collection = () => {
   }, []);
 
   const getPokemonList = () => {
-    fetch(`http://localhost:8080/api/game/pokemonList`, {
+    fetch(`${channel}/api/game/pokemonList`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${user?.accessToken}`,

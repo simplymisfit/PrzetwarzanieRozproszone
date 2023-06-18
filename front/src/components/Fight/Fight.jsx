@@ -26,14 +26,14 @@ function Fight() {
   ]);
   const [inBattle, setInBattle] = useState(false);
   const [players, setPlayers] = useState([]);
-  const { user } = useContext(PokemonContext);
+  const { user, getWinsAndLoses, channel } = useContext(PokemonContext);
 
   useEffect(() => {
     fetchActivePlayersCount();
   }, []);
 
   const fetchActivePlayersCount = () => {
-    fetch(`http://localhost:8080/api/game/activePlayers`, {
+    fetch(`${channel}/api/game/activePlayers`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${user?.accessToken}`,
@@ -48,7 +48,7 @@ function Fight() {
   };
 
   const handleAttack = (defenderId) => {
-    fetch(`http://localhost:8080/api/game/attack/${defenderId}`, {
+    fetch(`${channel}/api/game/attack/${defenderId}`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${user?.accessToken}`,
@@ -61,6 +61,7 @@ function Fight() {
         else {
           setBattleLog(data);
           setInBattle(true);
+          getWinsAndLoses();
         }
       })
       .catch((error) => console.error(error));
