@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import pl.sggw.przetwarzanierozproszone.configuration.MQConfig;
 import pl.sggw.przetwarzanierozproszone.domain.CustomMessage;
 import pl.sggw.przetwarzanierozproszone.domain.Player;
@@ -14,9 +16,8 @@ import pl.sggw.przetwarzanierozproszone.domain.Pokemon;
 import pl.sggw.przetwarzanierozproszone.enums.ChannelEnum;
 import pl.sggw.przetwarzanierozproszone.service.ApplicationService;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.*;
 
 @RestController
 @AllArgsConstructor
@@ -24,11 +25,21 @@ import java.util.UUID;
 public class ApplicationController {
     private ApplicationService applicationService;
     private RabbitTemplate template;
+    private final List<String> chatMessages = new ArrayList<>();
+    private final List<SseEmitter> emitters = new ArrayList<>();
     @PostMapping("/register")
     public Player processRegister(@RequestBody Player player) {
         return applicationService.createPlayer(player);
     }
-    @PostMapping("/chat")
+    @GetMapping(value = "/chat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter getChatMessages() {
+        SseEmitter emitter = new SseEmitter();
+        emitters.add(emitter);
+        sendChatHistory(emitter);
+        return emitter;
+    }
+
+    @PostMapping("/trigger")
     public void publishMessage(@RequestBody CustomMessage message){
         message.setMessageId(UUID.randomUUID().toString());
         message.setMessageDate(new Date());
@@ -51,6 +62,40 @@ public class ApplicationController {
             }
 
             template.convertAndSend(exchange, routingKey, message);
+        }
+        chatMessages.add(msg);
+        sendToAllEmitters(msg);
+    }
+
+    private String returnMessage(CustomMessage message){
+        return returnDate(message.getMessageDate()) + " | " + message.getPlayerName() + " : " + message.getMessage();
+    }
+
+    private String returnDate(Date date){
+        return date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    }
+
+    private void sendChatHistory(SseEmitter emitter) {
+        try {
+            for (String message : chatMessages) {
+                emitter.send(message, MediaType.TEXT_PLAIN);
+            }
+        } catch (IOException e) {
+            emitter.completeWithError(e);
+        }
+    }
+
+    private void sendToAllEmitters(String message) {
+        Iterator<SseEmitter> iterator = emitters.iterator();
+
+        while (iterator.hasNext()) {
+            SseEmitter emitter = iterator.next();
+            try {
+                emitter.send(message, MediaType.TEXT_PLAIN);
+            } catch (IOException e) {
+                emitter.completeWithError(e);
+                iterator.remove();
+            }
         }
     }
 
