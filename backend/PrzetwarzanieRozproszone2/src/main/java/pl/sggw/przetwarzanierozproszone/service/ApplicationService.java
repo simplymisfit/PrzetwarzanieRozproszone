@@ -190,26 +190,18 @@ public class ApplicationService {
         CustomMessage message = new CustomMessage();
         message.setMessageId(UUID.randomUUID().toString());
         message.setMessageDate(new Date());
-        String minutes = Integer.toString(message.getMessageDate().getMinutes());
-        if (minutes.length()==1)
-            minutes="0"+minutes;
-        message.setMessage("["+message.getMessageDate().getHours() + ":" + minutes + "] Zalogowano na kanał "+environment.getProperty("server.number")+": "+username);
+        message.setPlayerName(username);
+        message.setMessage("Zalogowano na kanał "+environment.getProperty("server.number"));
         template.convertAndSend(MQConfig.EXCHANGE2, MQConfig.ROUTING_KEY2, message);
         template.convertAndSend(MQConfig.EXCHANGE1, MQConfig.ROUTING_KEY1, message);
-        chatMessages.add(message.getMessage());
-        sendToAllEmitters(message.getMessage());
     }
     public void sendNotificationOnPlayerLogout(String username){
         CustomMessage message = new CustomMessage();
         message.setMessageId(UUID.randomUUID().toString());
         message.setMessageDate(new Date());
-        String minutes = Integer.toString(message.getMessageDate().getMinutes());
-        if (minutes.length()==1)
-            minutes="0"+minutes;
-        message.setMessage("["+message.getMessageDate().getHours() + ":" + minutes + "] Wylogowano z kanału "+environment.getProperty("server.number")+": "+username);
+        message.setPlayerName(username);
+        message.setMessage("Wylogowano z kanału "+environment.getProperty("server.number"));
         template.convertAndSend(MQConfig.EXCHANGE2, MQConfig.ROUTING_KEY2, message);
-        chatMessages.add(message.getMessage());
-        sendToAllEmitters(message.getMessage());
     }
 
     public boolean logout(String username){
