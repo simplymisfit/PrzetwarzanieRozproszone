@@ -65,7 +65,7 @@ public class SecurityConfiguration extends WebMvcConfigurerAdapter {
                         "/api/game/setPokemons",
                         "/api/game/activePlayers",
                         "/api/game/pokemonList",
-                        "/api/game/",
+                        "/api/game/getWinsAndLoses",
                         "/api/game/"
                         ).authenticated()
                 .mvcMatchers("/api/game/register").permitAll();

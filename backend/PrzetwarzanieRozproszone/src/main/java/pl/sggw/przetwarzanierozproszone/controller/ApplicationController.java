@@ -82,4 +82,10 @@ public class ApplicationController {
     public List<Pokemon> getPokemonList(){
         return applicationService.getPokemonList();
     }
+
+    @GetMapping("/getWinsAndLoses")
+    public int[] getWinsAndLoses(){
+        String username = applicationService.getPrincipalUsername(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return applicationService.getWinsAndLoses(username);
+    }
 }

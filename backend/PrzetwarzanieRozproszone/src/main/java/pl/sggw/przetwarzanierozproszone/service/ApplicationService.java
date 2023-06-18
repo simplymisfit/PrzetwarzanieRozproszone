@@ -643,4 +643,11 @@ public class ApplicationService {
     public List<Pokemon> getPokemonList(){
         return pokemonRepository.findAll();
     }
+
+    public int[] getWinsAndLoses(String username){
+        return new int[]{
+                playerRepository.findByUsername(username).get().getWinCount(),
+                playerRepository.findByUsername(username).get().getLoseCount()
+        };
+    }
 }
