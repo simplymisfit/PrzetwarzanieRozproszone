@@ -4,11 +4,9 @@ export const PokemonContext = createContext(undefined);
 
 const PokemonProvider = (props) => {
   const [user, setUser] = useState(null);
-  console.log("🚀 ~ file: PokemonProvider.js:7 ~ PokemonProvider ~ user:", user);
-
+  const [wins, setWins] = useState(0);
+  const [loses, setLoses] = useState(0);
   const [team, setTeam] = useState([]);
-  // const [playerPokemonsIds, setPlayerPokemonsIds] = useState([]);
-
   const [newTeam, setNewTeam] = useState([]);
 
   useEffect(() => {
@@ -16,6 +14,7 @@ const PokemonProvider = (props) => {
   }, [team]);
 
   useEffect(() => {
+    getWinsAndLoses();
     getPlayerPokemons();
   }, [user]);
 
@@ -40,6 +39,26 @@ const PokemonProvider = (props) => {
         //   ids.push(data[i].id);
         // }
         // setPlayerPokemonsIds(ids);
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const getWinsAndLoses = () => {
+    fetch(`http://localhost:8080/api/game/getWinsAndLoses`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${user?.accessToken}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("🚀 ~ file: PokemonProvider.js:39 ~ .then ~ data:", data);
+        if (data?.error) {
+        } else {
+          setWins(data[0]);
+          setLoses(data[1]);
+        }
       })
       .catch((error) => console.error(error));
   };
@@ -73,6 +92,9 @@ const PokemonProvider = (props) => {
     newTeam: newTeam,
     setNewTeam: setNewTeam,
     setPokemons: setPokemons,
+    wins: wins,
+    loses: loses,
+    getWinsAndLoses: getWinsAndLoses,
   };
 
   return <PokemonContext.Provider value={providerData}>{props.children}</PokemonContext.Provider>;

@@ -26,7 +26,7 @@ function Fight() {
   ]);
   const [inBattle, setInBattle] = useState(false);
   const [players, setPlayers] = useState([]);
-  const { user } = useContext(PokemonContext);
+  const { user, getWinsAndLoses } = useContext(PokemonContext);
 
   useEffect(() => {
     fetchActivePlayersCount();
@@ -61,6 +61,7 @@ function Fight() {
         else {
           setBattleLog(data);
           setInBattle(true);
+          getWinsAndLoses();
         }
       })
       .catch((error) => console.error(error));

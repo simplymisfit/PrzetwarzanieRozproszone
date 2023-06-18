@@ -5,7 +5,8 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { PokemonContext } from "../../providers/PokemonProvider";
 const Profile = () => {
   const [isOpen, setOpen] = useState(true);
-  const { user } = useContext(PokemonContext);
+  const { user, wins, loses } = useContext(PokemonContext);
+
   return (
     <RightItemWrapper>
       <RightItemHeader isOpen={isOpen} onClick={() => setOpen(!isOpen)}>
@@ -14,10 +15,10 @@ const Profile = () => {
       </RightItemHeader>
       {isOpen ? (
         <ProfileDescription>
-          <UserName>Adam</UserName>
-          <p>Zwycięstwa: 1</p>
-          <p>Przegrane: 1</p>
-          <p>Dostępne Pokemony: 1/50</p>
+          <UserName>{user?.username}</UserName>
+          <p>Zwycięstwa: {wins}</p>
+          <p>Przegrane: {loses}</p>
+          <p>Współczynnik zwycięstw {((wins / (wins + loses)) * 100).toFixed(2)}%</p>
         </ProfileDescription>
       ) : null}
     </RightItemWrapper>
