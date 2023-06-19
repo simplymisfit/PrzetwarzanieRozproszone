@@ -41,12 +41,6 @@ const PokemonProvider = (props) => {
         } else {
           setTeam(data);
         }
-
-        // let ids = [];
-        // for (let i = 0; i < data.length; i++) {
-        //   ids.push(data[i].id);
-        // }
-        // setPlayerPokemonsIds(ids);
       })
       .catch((error) => console.error(error));
   };

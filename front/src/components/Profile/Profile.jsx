@@ -18,7 +18,9 @@ const Profile = () => {
           <UserName>{user?.username}</UserName>
           <p>Zwycięstwa: {wins}</p>
           <p>Przegrane: {loses}</p>
-          <p>Współczynnik zwycięstw {((wins / (wins + loses)) * 100).toFixed(2)}%</p>
+          <p>
+            Współczynnik zwycięstw {wins === 0 && loses === 0 ? "0" : [loses === 0 && wins > 0 ? "100" : ((wins / (wins + loses)) * 100).toFixed(2)]}%
+          </p>
         </ProfileDescription>
       ) : null}
     </RightItemWrapper>

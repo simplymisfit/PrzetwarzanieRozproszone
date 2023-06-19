@@ -77,7 +77,7 @@ const LoginForm = ({ setIsLogin }) => {
         {errors.password?.type === "required" && <ErrorNotification message="To pole jest obowiązkowe" />}
         {errors?.password?.type === "minLength" && <ErrorNotification message="Hasło musi mieć co najmniej 3 znaki" />}
         <FormControl fullWidth>
-          <InputLabel>Type</InputLabel>
+          <InputLabel>Kanał</InputLabel>
           <Select
             {...register("channel", {
               required: "To pole jest obowiązkowe",
