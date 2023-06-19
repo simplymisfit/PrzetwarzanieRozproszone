@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { ChatDescription, BottomPanel, MessagesWrapper, Message } from "./Chat.styled";
 import { RightItemWrapper, RightItemHeader } from "../Profile/Profile.styled";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -12,22 +12,19 @@ import { PokemonContext } from "../../providers/PokemonProvider";
 const Chat = () => {
   const [isOpen, setOpen] = useState(true);
   const [newMessage, setNewMessage] = useState("");
-  const [messages, setMessages] = useState([]);
-  const { user, channel } = useContext(PokemonContext);
-  const sendMessage = (message) => {
-    let previousMessages = [...messages];
-    previousMessages.push(newMessage);
-    setMessages(previousMessages);
+  const { user, channel, messages } = useContext(PokemonContext);
+
+  const sendMessage = (msg) => {
     setNewMessage("");
     const textarea = document.getElementById("message");
     textarea.value = "";
-    fetch(`${channel}/api/game/chat`, {
+    fetch(`${channel}/api/game/trigger`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${user?.accessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message: message }),
+      body: JSON.stringify({ msg: msg }),
     })
       .then((response) => response.json())
       .then((data) => {})
@@ -45,9 +42,10 @@ const Chat = () => {
       {isOpen ? (
         <ChatDescription>
           <MessagesWrapper>
-            {messages?.map((message, id) => {
-              return <Message>{message}</Message>;
-            })}
+            <ul id="chat-messages"></ul>
+            {/* {messages?.map((message, id) => {
+              return <Message key={id}>{message}</Message>;
+            })} */}
           </MessagesWrapper>
           <BottomPanel>
             <StyledTextarea
