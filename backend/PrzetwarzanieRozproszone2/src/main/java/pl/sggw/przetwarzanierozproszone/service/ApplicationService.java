@@ -174,8 +174,10 @@ public class ApplicationService {
     }
 
     public void checkIfPlayerIsNotOnAnotherChannel(String username){ //odpytuje drugi serwer czy użytkownik jest zalogowany
-        String port = environment.getProperty("server.number").equals(Integer.toString(1)) ? "8081":"8080";
-        String uri = "http://localhost:"+port+"/api/game/isonline/"+username;
+//        String port = environment.getProperty("server.number").equals(Integer.toString(1)) ? "8081":"8080";
+//        String uri = "http://localhost:"+port+"/api/game/isonline/"+username;
+        String port = environment.getProperty("server.number").equals(Integer.toString(1)) ? "ch2:8081":"ch1:8080";
+        String uri = "przetwarzanie-rozproszone-"+port+"/api/game/isonline/"+username;
         RestTemplate restTemplate = new RestTemplate();
         try{
             Boolean response = restTemplate.getForObject(uri, Boolean.class);
