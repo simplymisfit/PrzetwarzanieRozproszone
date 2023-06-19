@@ -99,7 +99,7 @@ public class ApplicationService {
                 fight.add("Pokemon: "+attackerPokemonNames.get(0)+ " gracza: "+attacker.getUsername()+" został wyeliminowany");
                 attackerPokemonNames.remove(0);
                 if(defenderPokemons.size()!=0)
-                    fight.add("Pokemon: "+attackerPokemonNames.get(0)+ " gracza: "+attacker.getUsername()+" wchodzi do walki");
+                    fight.add("Pokemon: "+defenderPokemonNames.get(0)+ " gracza: "+defender.getUsername()+" wchodzi do walki");
             }
             if(attackerPokemons.size()==0){
                 fight.add("Wygrał gracz: "+defender.getUsername());
