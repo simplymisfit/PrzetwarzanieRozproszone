@@ -9,6 +9,7 @@ const PokemonProvider = (props) => {
   const [loses, setLoses] = useState(0);
   const [team, setTeam] = useState([]);
   const [newTeam, setNewTeam] = useState([]);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem("user");
@@ -41,12 +42,6 @@ const PokemonProvider = (props) => {
         } else {
           setTeam(data);
         }
-
-        // let ids = [];
-        // for (let i = 0; i < data.length; i++) {
-        //   ids.push(data[i].id);
-        // }
-        // setPlayerPokemonsIds(ids);
       })
       .catch((error) => console.error(error));
   };
@@ -86,6 +81,24 @@ const PokemonProvider = (props) => {
       .catch((error) => console.error(error));
   };
 
+  const eventSource = new EventSource(`${channel}/api/game/chat`);
+  const chatMessagesElement = document.getElementById("chat-messages");
+  eventSource.addEventListener("message", function (event) {
+    const message = event.data;
+    const time = message.split(" | ")[0];
+    const playerName = message.split(" | ")[1].split(":")[0].trim();
+    let msgValue = "";
+    if (message.includes("Zalogowano") || message.includes("Wylogowano")) {
+      msgValue = message.split(" : ")[1];
+    } else {
+      msgValue = message.split(`":"`)[1] ? message.split(`":"`)[1].split(`"}`)[0] : "";
+    }
+
+    const messageItem = document.createElement("li");
+    messageItem.textContent = `(${time}) ${playerName}:${msgValue}`;
+    chatMessagesElement?.appendChild(messageItem);
+  });
+
   const providerData = {
     user: user,
     setUser: setUser,
@@ -98,6 +111,8 @@ const PokemonProvider = (props) => {
     loses: loses,
     getWinsAndLoses: getWinsAndLoses,
     channel: channel,
+    messages: messages,
+    setMessages: setMessages,
   };
 
   return <PokemonContext.Provider value={providerData}>{props.children}</PokemonContext.Provider>;

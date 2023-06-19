@@ -18,17 +18,16 @@ import Button from "@mui/material/Button";
 import { PokemonContext } from "../../providers/PokemonProvider";
 
 function Fight() {
-  const [battleLog, setBattleLog] = useState([
-    "Pokemon: Psyduck gracza: a zadał 32 punktów obrażeń pokemonowi Bulbasaur gracza b",
-    "Pokemon: Bulbasaur gracza: b został wyeliminowany",
-    "Pokemon: Charmander gracza: b wchodzi do walki",
-    "Wygrał gracz: a",
-  ]);
+  const [battleLog, setBattleLog] = useState([]);
   const [inBattle, setInBattle] = useState(false);
+  const [displayedElements, setDisplayedElements] = useState([]);
+  const [actualLog, setActualLog] = useState("");
   const [players, setPlayers] = useState([]);
   const { user, getWinsAndLoses, channel } = useContext(PokemonContext);
+  const [pokemonList, setPokemonList] = useState([]);
 
   useEffect(() => {
+    getPokemonList();
     fetchActivePlayersCount();
   }, []);
 
@@ -59,6 +58,7 @@ function Fight() {
       .then((data) => {
         if (data?.error) alert(data?.message);
         else {
+          // getLogs(data);
           setBattleLog(data);
           setInBattle(true);
           getWinsAndLoses();
@@ -67,11 +67,46 @@ function Fight() {
       .catch((error) => console.error(error));
   };
 
+  const getPokemonList = () => {
+    fetch(`${channel}/api/game/pokemonList`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${user?.accessToken}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setPokemonList(data);
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const nextFigth = () => {
+    setDisplayedElements([]);
+    setInBattle(false);
+  };
+
+  useEffect(() => {
+    const displayArrayWithDelay = () => {
+      let currentIndex = 0;
+      const intervalId = setInterval(() => {
+        setDisplayedElements((prevElements) => [...prevElements, battleLog[currentIndex]]);
+        currentIndex++;
+
+        if (currentIndex === battleLog.length) {
+          clearInterval(intervalId);
+        }
+      }, 1000);
+    };
+    if (battleLog.length > 0) displayArrayWithDelay();
+  }, [battleLog]);
+
   return (
     <div>
       {inBattle ? (
         <>
-          <PokemonImagesWrapper>
+          {/* <PokemonImagesWrapper>
             <Pokemon>
               <PokemonImage src={PokemonImg} />
               <PokemonName>Squirtle</PokemonName>
@@ -81,15 +116,15 @@ function Fight() {
               <PokemonImage src={PokemonImg} />
               <PokemonName>Squirtle</PokemonName>
             </Pokemon>
-          </PokemonImagesWrapper>
+          </PokemonImagesWrapper> */}
           <BattleLogWrapper>
-            {battleLog?.map((log, index) => (
+            {displayedElements?.map((log, index) => (
               <RoundWrapper key={index}>
                 <RoundHeader>Runda {index + 1}</RoundHeader>
                 <RoundDescription>{log}</RoundDescription>
               </RoundWrapper>
             ))}
-            <NextFightButton onClick={() => setInBattle(false)}>Następna walka</NextFightButton>
+            {displayedElements.length >= battleLog.length ? <NextFightButton onClick={() => nextFigth()}>Następna walka</NextFightButton> : null}
           </BattleLogWrapper>
         </>
       ) : (

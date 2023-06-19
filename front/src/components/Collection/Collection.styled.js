@@ -66,8 +66,9 @@ const PokemonInfo = styled.div`
 
 const PokemonNumberWrapper = styled.div`
   display: flex;
-  padding: 10px 20px;
+  padding: 20px;
   gap: 20px;
+  justify-content: center;
 `;
 
 const PokemonNumber = styled.div`

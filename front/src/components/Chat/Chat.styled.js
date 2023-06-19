@@ -10,7 +10,6 @@ const ChatDescription = styled.div`
 const MessagesWrapper = styled.div`
   height: 150px;
   overflow-y: scroll;
-  padding: 20px;
 `;
 
 const BottomPanel = styled.div`

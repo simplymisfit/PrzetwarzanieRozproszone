@@ -14,15 +14,13 @@ import {
   SetPokemonButton,
   ButtonWrapper,
 } from "./Collection.styled";
-import Squirtle from "./images/7.png";
 import PokemonModal from "../PokemonModal/PokemonModal";
 import { PokemonContext } from "../../providers/PokemonProvider";
 
 const Collection = () => {
-  const [category, setCategory] = useState(0);
   const [activePokemon, setActivePokemon] = useState(0);
   const [pokemonList, setPokemonList] = useState([]);
-  const { team, setTeam, newTeam, setNewTeam, setPokemons } = useContext(PokemonContext);
+  const { newTeam, setNewTeam, setPokemons } = useContext(PokemonContext);
   const { user, channel } = useContext(PokemonContext);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -35,7 +33,6 @@ const Collection = () => {
     let data = [...newTeam];
     data[activePokemon] = {
       id: pokemonId,
-      name: "test",
     };
     setNewTeam(data);
   };
@@ -63,18 +60,6 @@ const Collection = () => {
     <LeftItemWrapper>
       <LeftItemHeader>Kolekcja Pokemonów</LeftItemHeader>
       <CollectionDescription>
-        <Options>
-          Pokaż:
-          <Option onClick={() => setCategory(0)} isActive={category === 0 ? true : false}>
-            Wszystkie
-          </Option>
-          <Option onClick={() => setCategory(1)} isActive={category === 1 ? true : false}>
-            Dostępne
-          </Option>
-          <Option onClick={() => setCategory(2)} isActive={category === 2 ? true : false}>
-            Niedostępne
-          </Option>
-        </Options>
         <PokemonNumberWrapper>
           <PokemonNumber isActive={activePokemon === 0 ? true : false} onClick={() => setActivePokemon(0)}>
             1
@@ -89,6 +74,9 @@ const Collection = () => {
             4
           </PokemonNumber>
         </PokemonNumberWrapper>
+        <ButtonWrapper>
+          <SetPokemonButton onClick={() => setPokemons()}>Wybierz Pokemony</SetPokemonButton>
+        </ButtonWrapper>
         <ImagesWrapper>
           {pokemonList?.map((pokemon, id) => {
             return (
@@ -100,47 +88,7 @@ const Collection = () => {
               </ImageWrapper>
             );
           })}
-          {/* {category == 0
-            ? pokemonList?.map((pokemon, id) => {
-                return (
-                  <ImageWrapper
-                    inTeam={newTeam[activePokemon].id == pokemon.id}
-                    onClick={() => (playerPokemonsIds.includes(pokemon.id) ? setPokemon(pokemon.id) : null)}
-                  >
-                    <PokemonImage isActive={playerPokemonsIds.includes(pokemon.id)} src={pokemon.photoUrl} />
-                    <PokemonInfo inTeam={newTeam[activePokemon].id == pokemon.id} isActive={playerPokemonsIds.includes(pokemon.id)}>
-                      #{pokemon.id} {pokemon.name}
-                    </PokemonInfo>
-                  </ImageWrapper>
-                );
-              })
-            : [
-                category == 1
-                  ? playerPokemons?.map((pokemon, id) => {
-                      return (
-                        <ImageWrapper inTeam={newTeam[activePokemon].id == pokemon.id} onClick={() => setPokemon(pokemon.id)}>
-                          <PokemonImage isActive={true} src={pokemon.photoUrl} />
-                          <PokemonInfo inTeam={newTeam[activePokemon].id == pokemon.id} isActive={true}>
-                            #{pokemon.id} {pokemon.name}
-                          </PokemonInfo>
-                        </ImageWrapper>
-                      );
-                    })
-                  : pokemonList?.map((pokemon, id) => {
-                      return playerPokemonsIds.includes(pokemon.id) ? null : (
-                        <ImageWrapper>
-                          <PokemonImage isActive={false} src={pokemon.photoUrl} />
-                          <PokemonInfo isActive={false}>
-                            #{pokemon.id} {pokemon.name}
-                          </PokemonInfo>
-                        </ImageWrapper>
-                      );
-                    }),
-              ]} */}
         </ImagesWrapper>
-        <ButtonWrapper>
-          <SetPokemonButton onClick={() => setPokemons()}>Wybierz Pokemony</SetPokemonButton>
-        </ButtonWrapper>
       </CollectionDescription>
       <PokemonModal isOpen={isOpen} toggleModal={toggleModal} />
     </LeftItemWrapper>
